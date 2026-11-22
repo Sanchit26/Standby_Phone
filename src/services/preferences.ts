@@ -14,6 +14,7 @@ export interface UserPreferences {
   widgetDefault: WidgetId
   quoteIndex: number
   taskCategory: string | null
+  oledProtection: boolean
   deviceCalendar: { enabled: boolean; ids: string[] }
 }
 
@@ -48,6 +49,7 @@ export function normalizePreferences(value: unknown): UserPreferences {
     widget: hasId(widgets, raw.widget) && available.has(raw.widget) ? raw.widget : widgetDefault,
     deviceCalendar: { enabled: device?.enabled === true, ids: Array.isArray(device?.ids)
       ? [...new Set(device.ids.filter(id => typeof id === 'string' && /^\d{1,19}$/.test(id)))].sort().slice(0, 100) : [] },
+    oledProtection: raw.oledProtection !== false,
     taskCategory: typeof raw.taskCategory === 'string' && raw.taskCategory ? raw.taskCategory : null,
     quoteIndex: typeof raw.quoteIndex === 'number' && Number.isInteger(raw.quoteIndex) &&
       raw.quoteIndex >= 0 && raw.quoteIndex < quotes.length ? raw.quoteIndex : 0,

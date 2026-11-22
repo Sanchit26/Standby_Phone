@@ -75,6 +75,11 @@ export function Settings() {
       <label className="settings-switch"><input type="checkbox" checked={prefs.clock.seconds}
         onChange={e => clock({ seconds: e.target.checked })}/> Show seconds</label>
       {!face.supportsAccent && <p>This face uses its own colors.</p>}
+      <label className="settings-switch">
+        <input type="checkbox" checked={prefs.oledProtection} aria-describedby="oled-description"
+          onChange={e => update({ oledProtection: e.target.checked })}/> OLED Burn-In Prevention
+      </label>
+      <p id="oled-description">Automatically reduces display wear with subtle pixel shifting and brightness reduction.</p>
       <Link className="widget-action" to="/?clock=faces" state={{ openedClockGallery: true }}>Open clock gallery</Link>
     </Panel>
     <Panel title="Timer and Focus">

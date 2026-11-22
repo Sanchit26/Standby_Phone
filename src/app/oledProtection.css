@@ -1,0 +1,19 @@
+/* Move content and its own ornament together. Leave all viewport shells and fullscreen media fixed. */
+[data-oled-shifted] :is(.standby-clock, .standby-timer, .standby-date, .standby .event-strip, .standby .widget-frame,
+    .workspace-page > .page-heading, .workspace-page > .workspace-panel, .list-card,
+    .calendar-spread > .workspace-panel, .sanctuary .mini-clock, .ambient-stage > blockquote) {
+  translate: var(--oled-x, 0px) var(--oled-y, 0px);
+}
+html[data-oled-dimmed] body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  pointer-events: none;
+  background: #000;
+  opacity: .32;
+}
+@media (prefers-reduced-motion: no-preference) {
+  html[data-oled-dimmed] body::after { animation: oled-dim 2s ease; }
+  @keyframes oled-dim { from { opacity: 0; } }
+}

@@ -101,6 +101,12 @@ Settings groups appearance, clock and display, timer, calendar sync, voice remin
 
 **Export backup** creates versioned JSON with categories, task relationships, local calendar events, focus history, in-app reminders and display preferences. Android opens its document picker and browser builds download a file. The export excludes device calendar data and selections, imported media, historical XP, and reminder delivery logs. Restore is unavailable. Keep the exported file private if it includes personal task, event, or reminder text.
 
+## OLED wear mitigation
+
+**OLED Burn-In Prevention** is on by default under Settings → Clock and Display. Every three minutes while visible, it offsets static foreground by up to four CSS pixels. Active gestures and dialogs defer the shift. Sanctuary photos and videos stay fixed.
+
+After 15 minutes without input, Android gradually dims the Standby window. Input, a modal reminder, turning protection off, or leaving the app restores the previous window setting, including system-managed brightness. Browser previews use a pointer-transparent visual dimmer. This reduces burn-in risk and cannot guarantee prevention.
+
 ## Visual themes
 
 The document theme sets background, text, accent, surface and focus tokens in `src/themes/index.css`. AMOLED Minimal uses true black with clean surfaces and focus outlines. Dark Fantasy RPG adds bronze, parchment, warm progress bars, and local serif and monospace font stacks.

@@ -1,6 +1,8 @@
-import { useLayoutEffect, useRef } from 'react'
+import { useEffect, useLayoutEffect, useRef } from 'react'
 import { useDeviceCalendarConnection } from '../hooks/useDeviceCalendar'
-import { useTimer } from './contexts'
+import { useDisplay, useTimer } from './contexts'
+import { startOledProtection } from '../services/oledProtection'
+import './oledProtection.css'
 import { Route, Routes, useLocation } from 'react-router-dom'
 import { Standby } from '../pages/Standby/Standby'
 import { QuestHub } from '../pages/QuestHub/QuestHub'
@@ -15,6 +17,8 @@ export function App() {
   const gesture = usePageSwipe()
   useDeviceCalendarConnection()
   const { notice } = useTimer()
+  const { oledProtection } = useDisplay().prefs
+  useEffect(() => { if (oledProtection) return startOledProtection() }, [oledProtection])
   const { pathname, search } = useLocation()
   const viewport = useRef<HTMLElement>(null)
   useLayoutEffect(() => { viewport.current?.scrollTo(0, 0) }, [pathname])

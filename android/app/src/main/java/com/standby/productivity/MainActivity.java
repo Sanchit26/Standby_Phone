@@ -10,6 +10,7 @@ public class MainActivity extends BridgeActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         registerPlugin(StandbySpeechPlugin.class);
+        registerPlugin(StandbyBrightnessPlugin.class);
         registerPlugin(StandbyCalendarPlugin.class);
         registerPlugin(StandbyBackupPlugin.class);
         super.onCreate(savedInstanceState);
