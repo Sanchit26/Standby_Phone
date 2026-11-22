@@ -10,6 +10,7 @@ import android.provider.CalendarContract.Calendars;
 import android.provider.CalendarContract.Events;
 import android.provider.CalendarContract.Instances;
 import android.provider.Settings;
+import android.text.TextUtils;
 import com.getcapacitor.JSArray;
 import com.getcapacitor.JSObject;
 import com.getcapacitor.PermissionState;
@@ -103,7 +104,7 @@ public class StandbyCalendarPlugin extends Plugin {
             String[] columns = { Instances.CALENDAR_ID, Instances.EVENT_ID, Instances.TITLE, Instances.BEGIN,
                 Instances.END, Instances.ALL_DAY, Instances.DISPLAY_COLOR };
             String where = READABLE + " AND " + Instances.CALENDAR_ID + " IN (" +
-                String.join(",", Collections.nCopies(ids.size(), "?")) + ") AND (" +
+                TextUtils.join(",", Collections.nCopies(ids.size(), "?")) + ") AND (" +
                 Instances.STATUS + " IS NULL OR " + Instances.STATUS + "!=" + Events.STATUS_CANCELED + ")";
             try (Cursor cursor = getContext().getContentResolver().query(uri.build(), columns, where,
                 ids.toArray(new String[0]), Instances.BEGIN + " ASC")) {

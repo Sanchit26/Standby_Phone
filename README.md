@@ -8,7 +8,7 @@ Use Node 24 and npm. Use JDK 21 for the Android Gradle build. Run `npm ci`, then
 
 ## Architecture
 
-- **Navigation** uses React Router with hash URLs. Swipe left to advance through Settings, Standby, Quest Hub, Calendar, Spotify and Sanctuary. Swipe right to return. Each transition adds a history entry. Capacitor App's default Android back handler uses WebView history. The two ends stop.
+- **Navigation** uses React Router with hash URLs. Swipe left to advance through Settings, Standby, Quest Hub, Calendar, Spotify and Sanctuary. Swipe right to return. Each transition adds a history entry. Android Back gives an open modal the same dismissal behavior as Escape before using WebView history. The two ends stop.
 - **Gestures** use Pointer Events on the page. Recognition requires 60 CSS pixels horizontally and a horizontal displacement at least 1.5 times the vertical displacement. Controls and gestures that start vertically are excluded. Put `data-page-swipe="off"` on any carousel or custom control that owns its own gestures.
 - **Shared state** uses separate display and timer contexts. `useDisplay().update(patch)` normalizes changes. Startup loads Preferences before mounting providers. Serialized writes preserve update order. Preferences include theme, clock format, seconds, face, widget and widget order. Unknown IDs fall back to registered defaults. New widgets append to the saved order. The old theme key remains readable.
 - **Faces and widgets** register a component under a stable ID in their respective registries under `src/components`. Faces declare compatible themes. Widget capabilities declare optional permission or native dependencies. An empty list denotes an offline widget. Digital and Tasks are the first entries. The clock owns its ticks.
@@ -19,15 +19,71 @@ Use Node 24 and npm. Use JDK 21 for the Android Gradle build. Run `npm ci`, then
 
 ## Android
 
-Install Android Studio and the SDK platform specified in `android/variables.gradle`. Build and copy the assets, then open the native project:
+### Build the debug APK
 
-```sh
+Install Node 24, JDK 21, and Android SDK Platform 36, Build Tools 36.0.0 and Platform Tools through Android Studio's SDK Manager. Set `JAVA_HOME` to your JDK 21 directory. Configure the SDK location in Android Studio or set `ANDROID_HOME` if Gradle cannot find the SDK. From the repository root in PowerShell, run:
+
+```powershell
+npm ci
 npm run build
 npx cap sync android
-npx cap open android
+Push-Location android
+.\gradlew.bat :app:compileDebugJavaWithJavac :app:assembleDebug
+Pop-Location
 ```
 
-Sync Gradle and run on an API 24+ device or emulator. The native activity requests landscape and immersive system bars. Use the mounted phone to check gesture interaction with the system edges, Android Back, and resume after locking the screen.
+The output is [app-debug.apk](android/app/build/outputs/apk/debug/app-debug.apk). Its package ID is `com.standby.productivity`, version name `1.0` and version code `1`. The APK supports API 24 and later and includes the production web assets. Android uses a debug signature for this build.
+
+### Install on the POCO X5 Pro
+
+For manual installation, copy the APK over USB to the phone's Downloads folder. Open it in Files and allow installation from that source if Android prompts. Then open **Standby**.
+
+For USB debugging, enable Developer options and USB debugging on the phone. Connect with a data cable, unlock the phone and approve the computer's prompt. From the repository root, use Platform Tools on your PATH or run `adb.exe` from its full path. Replace `YOUR_POCO_SERIAL` with the phone's serial shown as `device`.
+
+```powershell
+adb devices -l
+adb -s YOUR_POCO_SERIAL shell getprop ro.product.model
+adb -s YOUR_POCO_SERIAL install -r .\android\app\build\outputs\apk\debug\app-debug.apk
+adb -s YOUR_POCO_SERIAL shell am start -W -n com.standby.productivity/.MainActivity
+```
+
+If ADB shows `unauthorized`, unlock the phone and accept the debugging prompt. If the phone is missing, try a data-capable cable and check the Windows USB driver. If Android reports an incompatible signature, stop and keep the installed copy and its data. An in-place update requires the same package ID and signing key. [Android ADB guide](https://developer.android.com/tools/adb)
+
+The native activity requests landscape and restores immersive mode when it regains focus. Android's edge gestures can reveal system bars temporarily, and some large Android displays can override a fixed orientation. Calendar synchronization requests `READ_CALENDAR` when enabled. The manifest also declares normal Internet access. Native speech uses the installed voice engine and brightness control applies to the Standby window without a system settings permission. Backup export uses the Android document picker.
+
+### POCO X5 Pro acceptance checklist
+
+Run these checks on the phone and record pass or fail. Use disposable entries and copies of test media. Record the Android and MIUI or HyperOS versions and WebView version if a check fails.
+
+| Check | Action and expected result |
+| --- | --- |
+| A. First launch | Open Standby from the launcher. The bundled dashboard opens without a server. Android may display its fullscreen tutorial. Standby requests Calendar access only when enabled. |
+| B. Landscape and fullscreen | Turn the phone and reveal the bars with an edge swipe. Standby stays in landscape, content clears the cutout, and the bars hide again after the gesture. |
+| C. Themes | Switch between AMOLED Minimal and Dark Fantasy RPG in Settings. Check the giant clock, small timer, right-side widgets, true black and the RPG frames for clipping and alignment. |
+| D. Clock gallery | Hold the clock, choose a face, close and reopen the app. The selected face persists. |
+| E. Swipes and widgets | Visit Settings ← Standby → Quest Hub → Calendar → Spotify → Sanctuary and reverse. Swipe vertically over the Standby widget and Sanctuary media. Double-tap a widget to expand it, hold it to manage it and verify task lists can still scroll. |
+| F. Quest Hub | Create a test category, task and subtask. Complete a leaf, restart and verify the hierarchy, active category and its progress persist. |
+| G. Countdown and stopwatch | Start a task timer, pause and resume, then check history after completion. Background a running stopwatch and return. The elapsed time reconciles and history records the session once. |
+| H. Google Calendar | Sync the selected Google calendars on the phone, enable **Show device calendar events**, grant read access and select calendars. Check a timed event, a recurring occurrence and an all-day event. Verify local-time display, widget dots, today's notice, read-only entries and selection persistence. Disable the integration or deny permission to confirm local events stay usable. |
+| I. Voice reminders | Select a voice, use **Test Voice**, then schedule a disposable foreground reminder. Check the overlay and announcement, Silence and Dismiss, and test speech again after returning from another app. |
+| J. Offline TTS | Install offline voice data in Android's text-to-speech settings before enabling airplane mode. Use **Test Voice** and run a foreground reminder. Audio should play through the installed voice. |
+| K. OLED mitigation | Keep Standby visible without input for over 15 minutes. Check that the screen dims, then touch the app and check immediate restoration. Repeat with Home, lock and unlock, turning protection off, and a reminder appearing while dimmed. While idle, check that any pixel shift stays subtle and clear of edges. |
+| L. Sanctuary | Import copies of a photo and a supported video. Check fit and fill, muted loop, playback controls, pause when leaving, the mini clock, and selection and order after restart. Test deletion only with a disposable import. |
+| M. Restart | Reopen Standby and verify display preferences, test tasks, timer state, reminders and imported media. Export a backup and confirm the document picker can save it. |
+| N. Android Back | With the keyboard shown, press Back to dismiss it. With a task editor, widget or clock gallery open, press Back to dismiss the overlay first. With no overlay, verify Back returns through visited pages. |
+| O. Charging and extended use | Run on the charger for the intended session length. Check screen timeout, dimming, touch response, audio and video, and temperature. Lock and wake the phone to check timer and display recovery. |
+
+Standby currently follows the phone's screen timeout. For the 15-minute test, use a device setting that keeps the display on long enough. A future foreground-only option could set `FLAG_KEEP_SCREEN_ON` on the activity while the mounted display is needed. [Android guidance on keeping the screen on](https://developer.android.com/develop/background-work/background-tasks/awake/screen-on)
+
+If Calendar is empty, first confirm the events are visible in Google Calendar on the POCO and the intended calendars are synced to Android. If Test Voice reports no offline voice, download the language through the installed engine while online and try again. If a video fails to play, try a small H.264 MP4 as a test and capture the original format and codec. Voice reminder delivery depends on the foreground scheduler and is unavailable while the app is force-stopped.
+
+For a failure, record the exact steps, expected and actual behavior, and a screenshot or screen recording. For startup crashes, capture the crash buffer immediately. For an issue while Standby is still running, capture just its process logs. Review captures for private content before sharing.
+
+```powershell
+adb -s YOUR_POCO_SERIAL logcat -b crash -d
+$standbyPid = (adb -s YOUR_POCO_SERIAL shell pidof com.standby.productivity).Trim()
+adb -s YOUR_POCO_SERIAL logcat --pid=$standbyPid -d
+```
 
 See the [14-phase development plan](docs/DEVELOPMENT_PLAN.md).
 
