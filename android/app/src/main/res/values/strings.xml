@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Standby</string>
+    <string name="title_activity_main">Standby</string>
+    <string name="package_name">com.standby.productivity</string>
+    <string name="custom_url_scheme">com.standby.productivity</string>
+</resources>

@@ -1,0 +1,39 @@
+.clock[data-accent="frost"] { --face-ink: #9bbcf7; }
+.clock[data-accent="amber"] { --face-ink: #ecc27b; }
+.clock[data-accent="mint"] { --face-ink: #a7e6c3; }
+
+.clock-digits { color: var(--face-ink, var(--face-default, var(--foreground))); }
+.face-thin .clock-digits { font-family: system-ui, sans-serif; font-weight: 200; letter-spacing: -.055em; }
+.face-terminal { --face-default: #a7e6c3; }
+.face-terminal .clock-digits { font-family: 'Courier New', monospace; letter-spacing: -.076em; font-weight: 700; }
+.face-outline .clock-digits {
+  color: transparent;
+  -webkit-text-stroke: max(1px, .022em) var(--face-ink, var(--foreground));
+}
+.face-serif .clock-digits { font-family: Georgia, serif; font-weight: 700; }
+.face-led { --face-default: #ff8c73; }
+.face-pixel { --face-default: #e6cba0; }
+.face-led .clock-digits, .face-pixel .clock-digits { display: block; width: 95%; padding: 0; }
+.clock-digits svg { display: block; width: 100%; height: auto; }
+.face-flip .clock-digits { display: flex; align-items: center; gap: .033em; font-size: .78em; padding: 0; }
+.flip-tile {
+  position: relative;
+  display: inline-grid;
+  place-items: center;
+  width: .6em;
+  height: 1.06em;
+  background: var(--surface);
+  border-radius: .075em;
+  letter-spacing: 0;
+}
+.flip-tile::after {
+  content: '';
+  position: absolute;
+  inset: 50% 0 auto;
+  border-top: 1px solid var(--background);
+}
+.flip-colon { width: .22em; text-align: center; letter-spacing: 0; }
+@media (prefers-reduced-motion: no-preference) {
+  .flip-tile > span { animation: settle-digit 140ms ease-out; }
+  @keyframes settle-digit { from { transform: scaleY(.86); opacity: .7; } }
+}

@@ -1,0 +1,188 @@
+.app-shell:has(.standby) {
+  height: 100vh;
+  height: 100dvh;
+  min-height: 0;
+  padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+}
+
+main:has(.standby) {
+  min-height: 0;
+  padding: 0;
+}
+
+.standby {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-rows: minmax(0, 1fr) auto;
+  height: 100%;
+  padding: clamp(22px, 7vh, 72px) 0 clamp(16px, 8vh, 76px);
+  user-select: none;
+}
+
+.standby-date {
+  position: absolute;
+  inset: clamp(6px, 2.7vh, 28px) clamp(16px, 3.8vw, 72px) auto auto;
+  color: var(--muted);
+  font-size: clamp(.65rem, 1.05vw, 1.15rem);
+}
+
+.standby-clock {
+  display: grid;
+  place-items: center;
+  min-width: 0;
+  padding-inline: 4%;
+  container-type: inline-size;
+}
+
+.clock {
+  display: flex;
+  position: relative;
+  justify-content: center;
+  width: 100%;
+  line-height: .94;
+  font-family: Arial, system-ui, sans-serif;
+  font-weight: 900;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.standby-clock .clock {
+  font-size: min(15vw, 51vh);
+  font-size: min(34cqw, 52vh);
+}
+
+.clock { direction: ltr; }
+
+.clock-digits {
+  letter-spacing: -.055em;
+  padding-inline-end: .055em;
+}
+
+.clock-detail {
+  position: absolute;
+  top: calc(100% + .3em);
+  color: var(--muted);
+  font-size: clamp(.65rem, 1.3vw, 1.4rem);
+  line-height: 1;
+  letter-spacing: .07em;
+}
+
+.standby-timer {
+  grid-row: 2;
+  min-width: 0;
+  padding-inline: 10%;
+  text-align: center;
+}
+
+.countdown-label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  text-transform: uppercase;
+  color: var(--muted);
+  font-size: clamp(.65rem, 1.55vw, 1.7rem);
+  font-weight: 650;
+  letter-spacing: .06em;
+}
+
+.countdown-value {
+  font-size: clamp(1.25rem, min(3vw, 8vh), 3.75rem);
+  font-weight: 750;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.16;
+}
+
+.standby-widget {
+  grid-column: 2;
+  grid-row: 1 / -1;
+  min-width: 0;
+  padding-inline: 9% 8%;
+  padding-bottom: clamp(18px, 6vh, 56px);
+}
+
+.tasks-widget {
+  --widget-accent: var(--standby-accent, var(--accent));
+  font-size: clamp(.9rem, min(2.4vw, 5.2vh), 2.75rem);
+}
+
+.tasks-heading {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: .5em;
+  align-items: baseline;
+  font-size: 1.3em;
+  font-weight: 750;
+  line-height: 1.15;
+}
+
+.tasks-heading h2, .task-title {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.tasks-percent {
+  color: var(--widget-accent);
+  font-variant-numeric: tabular-nums;
+}
+
+.tasks-meta {
+  display: flex;
+  justify-content: space-between;
+  gap: .65em;
+  margin-block: .5em .85em;
+  color: var(--muted);
+  font-size: .58em;
+}
+
+.tasks-list {
+  position: relative;
+  display: grid;
+  gap: .46em;
+  max-height: min(46vh, 6.85em);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  touch-action: pan-y;
+}
+
+.tasks-list li {
+  display: grid;
+  grid-template-columns: 1.18em minmax(0, 1fr);
+  gap: .75em;
+  align-items: start;
+  line-height: 1.25;
+}
+
+.task-mark {
+  display: grid;
+  place-items: center;
+  width: 1.18em;
+  height: 1.18em;
+  border: max(1px, .08em) solid currentColor;
+  border-radius: .24em;
+}
+
+.task-mark svg {
+  width: .85em;
+  height: .85em;
+}
+
+[data-completed="true"] .task-mark {
+  color: var(--background);
+  border-color: var(--widget-accent);
+  background: var(--widget-accent);
+}
+
+[data-completed="true"] .task-title {
+  color: var(--muted);
+  text-decoration: line-through;
+}
+
+.standby-rotate { display: none; }
+
+@media (orientation: portrait) {
+  main:has(.standby) { display: grid; place-items: center; }
+  .standby { display: none; }
+  .standby-rotate { display: block; padding: 1rem; text-align: center; }
+}
