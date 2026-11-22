@@ -8,4 +8,4 @@ Standby is an offline-first wall-mounted Android productivity dashboard. Use Rea
 - Keep the app usable offline with bundled assets. Store structured data in Dexie with migrations and lightweight settings in Capacitor Preferences.
 - Keep Quest Hub category-based. Preserve separate category progress and leave historical gamification records dormant.
 - Reuse existing state, registries, routing and services. Keep dependencies minimal and preserve working behavior.
-- After changes run `npm run typecheck`, `npm run lint`, `npm test` and `npm run build`. Claim checks passed only after running them successfully.
+- After changes run `npm run typecheck`, `npm run lint`, `npm test` and `npm run build`. Claim checks passed only after running them successfully
