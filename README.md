@@ -4,7 +4,7 @@ Standby is a landscape Android productivity dashboard for a wall-mounted phone. 
 
 ## Development
 
-Use Node 24 and npm. Run `npm ci`, then `npm run dev`. Use `npm test` for timer, task hierarchy and IndexedDB tests, `npm run typecheck` for strict TypeScript, `npm run lint` for linting and `npm run build` for a production bundle. `npm run preview` serves that bundle locally.
+Use Node 24 and npm. Use JDK 21 for the Android Gradle build. Run `npm ci`, then `npm run dev`. Use `npm test` for timer, task hierarchy and IndexedDB tests, `npm run typecheck` for strict TypeScript, `npm run lint` for linting and `npm run build` for a production bundle. `npm run preview` serves that bundle locally.
 
 ## Architecture
 
@@ -53,7 +53,9 @@ Dexie v3 preserves IDs and repairs broken hierarchy links. Tasks whose category 
 
 ## Focus timer
 
-Tap the countdown to start a session, choose a 15, 25, 45, 60, or 90-minute preset, or enter 1–720 whole minutes. The last valid duration is saved. Closing the panel leaves the session running. Pause stops active time. Finish now records completion with the time actually focused. Cancel records a cancelled session. Reset cancels an active session and clears the display to idle.
+Open the compact timer on Standby or choose Open timer controls in Settings. For a countdown, choose a 15, 25, 45, 60, or 90-minute preset, or enter 1–720 whole minutes. The last valid duration is saved. Closing the panel leaves the session running. Pause stops active time. Finish now records completion with the time actually focused. Cancel records a cancelled session. Reset cancels an active session and clears the display to idle.
+
+Switch to **Stopwatch** in the same panel to count up from zero. It accumulates elapsed time only during running segments and recovers running or paused sessions across refresh and resume. Finish saves the session under its original ID. Switching away from an active session requires confirmation.
 
 A deadline drives the running countdown. Dexie v4 saves timer state and terminal history together, with one record per session ID. An optional task link is for reference and does not affect task completion. The Focus widget shows today's completed count and time using local completion dates. Its expanded view shows the twelve most recent records, including cancelled sessions. A missing task is shown as unavailable. Legacy countdowns are restored where possible, and old records without a planned duration are labelled accordingly.
 
@@ -83,7 +85,21 @@ Videos start muted, loop inline, and pause when covered, backgrounded, or left. 
 
 Imports use origin-private files where streaming writes are available, with a Dexie Blob fallback. Metadata and selection are stored separately in Dexie. Import limits are 512 MiB for private files and 32 MiB for fallback, subject to available storage. Android WebView playback, app-restart persistence, and system-edge gestures require physical-device testing.
 
-The compact Calendar displays one dot per date with saved events, using the same reactive local-date query as the full Calendar. Dots update after creating, moving, or deleting events. A future Android Calendar Provider adapter can use the same event repository and day queries, with stable provider IDs for reconciliation. The current phase uses only locally created events and requests no calendar permissions.
+The Calendar agenda, compact widget dots, and Standby today notice combine local events with selected Android calendars. Local events can be edited or deleted in Standby. Device events are labeled read-only and can be opened in a compatible Android calendar app.
+
+### Device calendar setup
+
+1. In Google Calendar or the device's account settings, enable synchronization for the calendars you want on the mounted phone. Confirm those events are visible in the Android calendar app.
+2. In Standby, open Settings → Calendar Synchronization and turn on **Show device calendar events**. Grant Android read access and select the calendars to display.
+3. Use **Refresh** to read the provider and see the last successful read time. Standby also refreshes on app resume and when you open or browse Calendar.
+
+Standby uses only Android's read-calendar permission and reads bounded ranges of occurrences from the local provider. The Google Calendar app or another sync adapter supplies any cloud updates. Provider reads can reflect only what has arrived on the device. Standby normalizes timed events to the local time zone and preserves the provider's all-day dates. Device entries are cached in memory and cleared when you turn the integration off. Local events work in browser development.
+
+## Settings and backup
+
+Settings groups appearance, clock and display, timer, calendar sync, voice reminders, Sanctuary, backup and About. It reuses the persisted clock preferences and provides entry points to the clock gallery, timer controls and Sanctuary library.
+
+**Export backup** creates versioned JSON with categories, task relationships, local calendar events, focus history, in-app reminders and display preferences. Android opens its document picker and browser builds download a file. The export excludes device calendar data and selections, imported media, historical XP, and reminder delivery logs. Restore is unavailable. Keep the exported file private if it includes personal task, event, or reminder text.
 
 ## Visual themes
 

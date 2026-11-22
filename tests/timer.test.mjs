@@ -1,3 +1,4 @@
+import { formatDuration } from '../src/components/timer/format.ts'
 import 'fake-indexeddb/auto'
 import test from 'node:test'
 import assert from 'node:assert/strict'
@@ -97,4 +98,30 @@ test('today is based on local completion timestamps and excludes cancelled recor
     { endedAt: tomorrow, startedAt: tomorrow - 1000, status: 'completed' },
   ]
   assert.deepEqual(completedToday(sessions, midnight + 10), { count: 2, duration: 2000 })
+})
+
+test('stopwatch starts at zero, keeps elapsed active time on reopen, and finishes once', async t => {
+  const db = new StandbyDatabase('focus-stopwatch')
+  t.after(() => db.delete())
+  const repo = createFocusRepository(db)
+  await repo.apply({ type: 'switch', mode: 'stopwatch' }, 1000)
+  assert.equal((await repo.load(null, 1000)).timer.mode, 'stopwatch')
+  const started = await repo.apply({ ...action('count-up'), durationMs: 0 }, 1000)
+  assert.equal(formatDuration(elapsed(started.timer, 1250), true), '00:00:00')
+  assert.equal(formatDuration(elapsed(started.timer, 2000), true), '00:00:01')
+  await repo.apply({ type: 'pause' }, 3500)
+  await assert.rejects(repo.apply({ type: 'switch', mode: 'countdown' }, 5000), /Confirm/)
+  db.close()
+  await db.open()
+  assert.equal(elapsed((await repo.load(null, 6000)).timer, 6000), 2500)
+  await repo.apply({ type: 'resume' }, 10000)
+  assert.equal(elapsed((await repo.load(null, 12750)).timer, 12750), 5250)
+  await Promise.all([repo.apply({ type: 'finish' }, 13000), repo.apply({ type: 'finish' }, 13000)])
+  const history = await db.focusSessions.toArray()
+  assert.equal(history.length, 1)
+  assert.equal(history[0].id, 'count-up')
+  assert.equal(history[0].mode, 'stopwatch')
+  assert.equal(history[0].elapsedMs, 5500)
+  await repo.apply({ type: 'reset' }, 13001)
+  assert.deepEqual((await repo.load(null, 14000)).timer, { mode: 'stopwatch', status: 'idle' })
 })

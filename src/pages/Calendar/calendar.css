@@ -92,3 +92,5 @@
   .workspace-page.calendar-page { --page-inset: .6rem; --page-gap: .5rem; }
   .calendar-spread .page-heading, .month-heading .widget-action { min-height: 36px; }
 }
+
+.device-event-actions { align-items: center; }

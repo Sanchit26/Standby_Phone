@@ -8,7 +8,8 @@ export function localDate(d: Date) {
 export async function eventDatesInMonth(db: StandbyDatabase, year: number, month: number) {
   const first = localDate(new Date(year, month, 1))
   const next = localDate(new Date(year, month + 1, 1))
-  return new Set(await db.events.where('day').between(first, next, true, false).uniqueKeys())
+  const keys = await db.events.where('day').between(first, next, true, false).uniqueKeys()
+  return new Set(keys.filter((key): key is string => typeof key === 'string'))
 }
 export const dayEvents = (db: StandbyDatabase, day: string) =>
   db.events.where('day').equals(day).sortBy('start')

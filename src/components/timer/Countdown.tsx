@@ -6,7 +6,7 @@ import { formatDuration } from './format'
 
 function RunningCountdown({ timer }: { timer: Timer }) {
   const now = useClock(250)
-  return <span>{formatDuration(timer.mode === 'stopwatch' ? elapsed(timer, now.getTime()) : remaining(timer, now.getTime()))}</span>
+  return <span>{formatDuration(timer.mode === 'stopwatch' ? elapsed(timer, now.getTime()) : remaining(timer, now.getTime()), timer.mode === 'stopwatch')}</span>
 }
 
 export function Countdown() {
@@ -19,7 +19,7 @@ export function Countdown() {
   return <span aria-label={mode} className="countdown">
     <span className="countdown-label" title={label + state}>{label}{state}</span>
     <span role="timer" className="countdown-value">
-      {timer.status === 'running' ? <RunningCountdown timer={timer} /> : formatDuration(timer.mode === 'stopwatch' ? elapsed(timer) : remaining(timer))}
+      {timer.status === 'running' ? <RunningCountdown timer={timer} /> : formatDuration(timer.mode === 'stopwatch' ? elapsed(timer) : remaining(timer), timer.mode === 'stopwatch')}
     </span>
   </span>
 }

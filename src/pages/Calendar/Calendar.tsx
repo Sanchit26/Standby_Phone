@@ -1,7 +1,10 @@
-import { useCallback, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useClock } from '../../hooks/useClock'
 import { useQuery } from '../../hooks/useQuery'
+import { useDeviceMonth } from '../../hooks/useDeviceCalendar'
+import { deviceCalendar } from '../../services/deviceCalendar'
+import { mergeCalendarDay } from '../../storage/calendarView'
 import { useEventDates } from '../../hooks/useEventDates'
 import { db } from '../../storage/database'
 import { dayEvents, localDate, saveEvent } from '../../storage/calendar'
@@ -13,7 +16,11 @@ import './calendar.css'
 const weekday = new Intl.DateTimeFormat(undefined, { weekday: 'short' })
 const blank = (day: string) => ({ day, title: '', description: '', allDay: true, start: '', end: '', color: '' })
 function useEvents(day: string) {
-  return useQuery(useCallback(() => dayEvents(db, day), [day]))
+  const { data, error } = useQuery(useCallback(() => dayEvents(db, day), [day]))
+  const date = new Date(day + 'T12:00:00')
+  const device = useDeviceMonth(date.getFullYear(), date.getMonth())?.get(day)
+  const events = useMemo(() => mergeCalendarDay(data ?? [], device), [data, device])
+  return { data: events, error }
 }
 export function TodayEvents({ compact = false }: { compact?: boolean }) {
   const today = localDate(useClock(1000))
@@ -57,6 +64,10 @@ export function Calendar() {
   const days = new Date(year, month + 1, 0).getDate()
   const { data: events, error } = useEvents(day)
   const marks = useEventDates(year, month)
+  useEffect(() => {
+    void deviceCalendar.visit(year, month)
+    return () => deviceCalendar.leave(year, month)
+  }, [year, month])
   const [edit, setEdit] = useState<CalendarEvent | 'new'>()
   const [problem, fail] = useState('')
   return <section className="workspace-page calendar-page">
@@ -91,16 +102,25 @@ export function Calendar() {
         <div className="agenda-list">
           {(error || problem) && <p role="alert">{error || problem}</p>}
           {events && !events.length && <p>No events scheduled.</p>}
-          {events?.map(item => <article key={item.id} className="agenda-item" style={{ borderColor: item.color || undefined }}>
+          {events?.map(item => <article key={item.key} className="agenda-item" style={{ borderColor: item.color || undefined }}>
             <strong>{item.title}</strong>
-            <small>{item.allDay ? 'All day' : [item.start, item.end].filter(Boolean).join(' – ') || 'Time unspecified'}</small>
-            {item.description && <p>{item.description}</p>}
-            <div className="page-actions">
-              <button className="widget-action" onClick={() => setEdit(item)}>Edit</button>
-              <button className="widget-action" onClick={async () => {
-                if (window.confirm('Delete this event?')) try { await db.events.delete(item.id) } catch { fail('Unable to delete event.') }
-              }}>Delete</button>
-            </div>
+            <small>{item.allDay ? 'All day' : [item.start, item.end].filter(Boolean).join(' – ') || (item.source === 'device' && item.continuation ? 'Continues' : 'Time unspecified')}</small>
+            {item.source === 'local' ? <>
+              {item.local.description && <p>{item.local.description}</p>}
+              <div className="page-actions">
+                <button className="widget-action" onClick={() => setEdit(item.local)}>Edit</button>
+                <button className="widget-action" onClick={async () => {
+                  if (window.confirm('Delete this event?')) try { await db.events.delete(item.local.id) }
+                  catch { fail('Unable to delete event.') }
+                }}>Delete</button>
+              </div>
+            </> : <div className="page-actions device-event-actions">
+              <small>Device calendar · Read only</small>
+              <button className="widget-action" onClick={() => {
+                fail('')
+                void deviceCalendar.viewEvent(item.device).catch(() => fail('No calendar app could open this event.'))
+              }}>Open in Calendar</button>
+            </div>}
           </article>)}
         </div>
       </section>

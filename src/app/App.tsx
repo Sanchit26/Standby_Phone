@@ -1,4 +1,5 @@
 import { useLayoutEffect, useRef } from 'react'
+import { useDeviceCalendarConnection } from '../hooks/useDeviceCalendar'
 import { useTimer } from './contexts'
 import { Route, Routes, useLocation } from 'react-router-dom'
 import { Standby } from '../pages/Standby/Standby'
@@ -12,6 +13,7 @@ import { Spotify } from '../pages/Spotify/Spotify'
 import { ReminderOverlay } from '../components/ReminderOverlay'
 export function App() {
   const gesture = usePageSwipe()
+  useDeviceCalendarConnection()
   const { notice } = useTimer()
   const { pathname, search } = useLocation()
   const viewport = useRef<HTMLElement>(null)

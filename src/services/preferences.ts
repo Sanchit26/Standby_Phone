@@ -14,6 +14,7 @@ export interface UserPreferences {
   widgetDefault: WidgetId
   quoteIndex: number
   taskCategory: string | null
+  deviceCalendar: { enabled: boolean; ids: string[] }
 }
 
 function hasId<T extends object>(registry: T, value: unknown): value is Extract<keyof T, string> {
@@ -34,6 +35,7 @@ export function normalizePreferences(value: unknown): UserPreferences {
   const widgetEnabled = widgetOrder.filter(id => available.has(id))
   const widgetDefault = hasId(widgets, raw.widgetDefault) && available.has(raw.widgetDefault)
     ? raw.widgetDefault : widgetEnabled.find(id => id !== 'media') ?? 'tasks'
+  const device = raw.deviceCalendar as Partial<UserPreferences['deviceCalendar']> | undefined
   return {
     theme,
     face: hasId(faces, raw.face) && faces[raw.face].themes.some(t => t === theme) ? raw.face : 'digital',
@@ -44,6 +46,8 @@ export function normalizePreferences(value: unknown): UserPreferences {
     widgetEnabled,
     widgetDefault,
     widget: hasId(widgets, raw.widget) && available.has(raw.widget) ? raw.widget : widgetDefault,
+    deviceCalendar: { enabled: device?.enabled === true, ids: Array.isArray(device?.ids)
+      ? [...new Set(device.ids.filter(id => typeof id === 'string' && /^\d{1,19}$/.test(id)))].sort().slice(0, 100) : [] },
     taskCategory: typeof raw.taskCategory === 'string' && raw.taskCategory ? raw.taskCategory : null,
     quoteIndex: typeof raw.quoteIndex === 'number' && Number.isInteger(raw.quoteIndex) &&
       raw.quoteIndex >= 0 && raw.quoteIndex < quotes.length ? raw.quoteIndex : 0,

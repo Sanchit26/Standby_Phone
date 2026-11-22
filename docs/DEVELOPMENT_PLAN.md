@@ -13,8 +13,8 @@ Phases 1–9 establish the working foundation and landscape homepage. Later prom
 9. Dark Fantasy RPG theme and AMOLED refinement — complete. Shared ornamental frames, styled panels and galleries, and bundled Fantasy Pixel glyphs.
 10. Sanctuary refinement and compact Calendar indicators. Shared persistent selection, local media playback and library controls, and reactive event dots. Physical Android verification remains pending.
 11. Foreground voice reminders — complete. Settings management, an offline voice bridge, scheduling and delivery history, a themed overlay, and gamification cleanup.
-12. Native integration preparation. The future Android Calendar Provider adapter will use the existing Calendar data boundary.
-13. Android integration and device optimization.
+12. Settings consolidation and read-only Android Calendar Provider integration — implemented. Shared local/device calendar views, stopwatch checks and versioned backup export. Physical Android validation remains pending.
+13. Physical Android integration and device optimization. Verify provider permissions, recurring occurrences, document export, speech, lifecycle and hardware Back. Notification and call mirroring and local Wi-Fi pairing are later Phase 13 work.
 14. Testing, release signing and distribution.
 
 Implementation entry points and foreground scheduling limitations are documented in the [README](../README.md).

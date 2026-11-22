@@ -1,15 +1,25 @@
-.settings-panel { max-width: 40rem; }
-.settings-panel label {
+.settings-page { max-width: 56rem; }
+.settings-panel { margin-bottom: var(--page-gap); }
+.settings-panel h2 { font-size: 1.1rem; font-weight: 700; margin-bottom: .55rem; }
+[data-theme="dark-fantasy-rpg"] .settings-panel h2 { font-family: var(--theme-font-heading); color: var(--ornament-parchment); }
+.settings-panel p { margin: .3rem 0 .65rem; font-size: .88rem; }
+.settings-row, .settings-switch {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  justify-content: space-between;
   gap: .65rem;
-  font-weight: 650;
+  font-size: .91rem;
 }
-.settings-panel select {
+.settings-row { min-height: 48px; justify-content: space-between; padding-block: .2rem; }
+.settings-row select {
   width: min(100%, 17rem);
   min-height: 44px;
   border: 1px solid var(--theme-divider);
   border-radius: 4px;
 }
+.settings-switch { min-height: 44px; }
+.settings-switch input { width: 19px; height: 19px; accent-color: var(--accent); }
+.settings-panel small { color: var(--muted); }
+.calendar-options { margin: .55rem 0; }
+.calendar-options legend { font-weight: 650; }
+.settings-refresh { align-items: center; margin-top: .55rem; }

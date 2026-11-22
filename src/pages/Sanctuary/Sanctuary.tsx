@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { useDisplay } from '../../app/contexts'
 import { quotes } from '../../components/widgets/quotes'
 import { Modal } from '../../components/Modal'
@@ -99,13 +99,17 @@ export function SanctuaryWidget() {
     <Link className="widget-action" to="/sanctuary">Open Sanctuary</Link></section>
 }
 export function Sanctuary() {
+  const location = useLocation()
+  const navigate = useNavigate()
+  const libraryFromRoute = new URLSearchParams(location.search).get('library') === '1'
   const { data: items = [], error } = useQuery(library)
   const def = useQuery(preferred)
   const { prefs, update } = useDisplay()
   const { data: selected } = useQuery(selection)
   const [audibleItem, setAudibleItem] = useState<string>()
   const [cover, setCover] = useState(false)
-  const [manage, setManage] = useState(false)
+  const [showLibrary, setManage] = useState(false)
+  const manage = showLibrary || libraryFromRoute
   const [draft, setDraft] = useState<File>()
   const [ready, setReady] = useState(false)
   const [message, report] = useState('')
@@ -133,7 +137,14 @@ export function Sanctuary() {
     acceptType(picker.current.accept)
     picker.current.click()
   }
-  function close() { if (!busy) { setDraft(undefined); setManage(false); report('') } }
+  function close() {
+    if (busy) return
+    setDraft(undefined); setManage(false); report('')
+    if (libraryFromRoute) {
+      if (location.state?.openedLibrary) navigate(-1)
+      else navigate('/sanctuary', { replace: true })
+    }
+  }
   return <section className="sanctuary" aria-label="Sanctuary" tabIndex={0} {...gesture} onKeyDown={e => {
     if (e.target !== e.currentTarget) return
     if (e.key.toLowerCase() === 'g') { setManage(true); e.preventDefault(); return }
@@ -159,6 +170,7 @@ export function Sanctuary() {
         <button className="widget-action primary" disabled={!ready || busy} onClick={() => void run(async () => {
           await importMedia(draft)
           setAudibleItem(undefined); setDraft(undefined); setManage(false)
+          if (libraryFromRoute) navigate('/sanctuary', { replace: true })
         })}>{busy ? 'Importing…' : 'Add to library'}</button></> : <>
         <div className="page-actions">
           <button className="widget-action" onClick={() => pick()}>Import media</button>
