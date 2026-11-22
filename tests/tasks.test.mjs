@@ -116,7 +116,7 @@ test('category actions, sibling ordering, cascading deletion and undo are atomic
   assert.equal(await db.tasks.count(), 3)
 })
 
-test('v1 records migrate in place through v5 with stable IDs and repaired hierarchy', async t => {
+test('v1 records migrate in place through v7 with stable IDs and repaired hierarchy', async t => {
   const name = `legacy-${crypto.randomUUID()}`
   const legacy = new Dexie(name)
   legacy.version(1).stores({
@@ -137,7 +137,7 @@ test('v1 records migrate in place through v5 with stable IDs and repaired hierar
   await legacy.reminders.add({ id: 'reminder', title: 'Keep', scheduledAt: 1000, enabled: false })
   legacy.close()
   await db.open()
-  assert.equal(db.verno, 6)
+  assert.equal(db.verno, 7)
   assert.equal(await db.tasks.count(), 3)
   assert.equal((await db.tasks.get('child')).parentId, 'parent')
   assert.equal((await db.tasks.get('parent')).completed, false)

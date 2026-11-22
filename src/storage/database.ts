@@ -1,19 +1,17 @@
 import Dexie, { type Table } from 'dexie'
 import type { FocusSession, Reminder, Task, TaskCategory, CalendarEvent, MediaItem, Delivery } from '../types/models.ts'
 import { buildTaskTree, repairTaskLinks } from './taskTree.ts'
-import { reconcileHistory } from './questLedger.ts'
 
 import type { StoredTimer } from './focusRepository.ts'
 
-import type { Achievement, XpEvent } from './questEngine.ts'
 
 export class StandbyDatabase extends Dexie {
   categories!: Table<TaskCategory, string>
   tasks!: Table<Task, string>
   focusSessions!: Table<FocusSession, string>
   timerState!: Table<StoredTimer, string>
-  xpEvents!: Table<XpEvent, string>
-  achievements!: Table<Achievement, string>
+  xpEvents!: Table<{ id: string }, string>
+  achievements!: Table<{ id: string }, string>
   reminders!: Table<Reminder, string>
 
   events!: Table<CalendarEvent, string>
@@ -77,20 +75,22 @@ export class StandbyDatabase extends Dexie {
     this.version(5).stores({
       xpEvents: 'id, timestamp, [source+categoryId]',
       achievements: 'id, unlockedAt',
-    }).upgrade(async tx => {
-      const categories = tx.table<TaskCategory, string>('categories')
-      const tasks = tx.table<Task, string>('tasks')
-      const focusSessions = tx.table<FocusSession, string>('focusSessions')
-      const tree = buildTaskTree(await categories.toArray(), await tasks.toArray())
-      const sessions = await focusSessions.toArray()
-      await reconcileHistory(
-        { xpEvents: tx.table('xpEvents'), achievements: tx.table('achievements') },
-        tree, sessions, Date.now(),
-      )
     })
     this.version(6).stores({
       events: 'id, day', media: 'id, sortOrder', mediaBlobs: 'id', librarySettings: 'id',
       deliveries: 'id, scheduledAt, reminderId',
+    })
+    this.version(7).stores({}).upgrade(async tx => {
+      const reminders = tx.table<Reminder, string>('reminders')
+      const deliveries = tx.table<Delivery, string>('deliveries')
+      const legacy = await reminders.filter(row => row.channel === 'in-app' && !row.schedule &&
+        row.deliveredAt !== undefined && Number.isFinite(row.scheduledAt)).toArray()
+      for (const row of legacy) {
+        const id = row.id + ':' + row.scheduledAt
+        if (!await deliveries.get(id)) await deliveries.add({ id, reminderId: row.id, scheduledAt: row.scheduledAt,
+          triggeredAt: row.deliveredAt, message: row.message || row.title, status: 'unconfirmed' })
+        await reminders.update(row.id, { enabled: false })
+      }
     })
   }
 }

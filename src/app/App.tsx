@@ -9,6 +9,7 @@ import { usePageSwipe } from '../hooks/usePageSwipe'
 
 import { Calendar } from '../pages/Calendar/Calendar'
 import { Spotify } from '../pages/Spotify/Spotify'
+import { ReminderOverlay } from '../components/ReminderOverlay'
 export function App() {
   const gesture = usePageSwipe()
   const { notice } = useTimer()
@@ -25,6 +26,7 @@ export function App() {
       <Route path="/settings" element={<Settings />} />
       <Route path="*" element={<p>Page not found.</p>} />
     </Routes></main>
+    <ReminderOverlay />
     {notice && new URLSearchParams(search).get('timer') !== 'controls' && <div role="status" className="focus-toast">{notice}</div>}
   </div>
 }

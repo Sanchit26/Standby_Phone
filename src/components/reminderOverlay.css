@@ -1,0 +1,36 @@
+.widget-dialog.reminder-overlay[open] {
+  width: min(42rem, calc(100% - 40px));
+  max-height: min(75dvh, 32rem);
+  border-color: var(--theme-focus);
+}
+.reminder-overlay::backdrop { background: rgb(0 0 0 / .57); touch-action: none; }
+.reminder-overlay-body {
+  min-height: 0;
+  overflow: auto;
+  overscroll-behavior: contain;
+  padding: clamp(.9rem, 3vw, 1.8rem);
+}
+.reminder-overlay header, .reminder-overlay footer { display: flex; align-items: center; flex-wrap: wrap; gap: .65rem; }
+.reminder-overlay header { color: var(--accent); font-size: .85rem; font-weight: 700; }
+.reminder-overlay header svg { width: 1.2rem; }
+.reminder-overlay .reminder-message {
+  margin: .65rem 0;
+  padding-block: .65rem;
+  border-block: 1px solid var(--theme-divider);
+  color: var(--foreground);
+  font-size: clamp(1.25rem, min(4.6vw, 8.5vh), 2.4rem);
+  line-height: 1.2;
+  font-weight: 600;
+  overflow-wrap: anywhere;
+  white-space: pre-wrap;
+}
+.reminder-overlay footer { justify-content: space-between; color: var(--muted); font-size: .85rem; }
+[data-theme="dark-fantasy-rpg"] .reminder-message { font-family: var(--theme-font-heading); }
+@media (prefers-reduced-motion: no-preference) {
+  .reminder-overlay[open] { animation: reminder-in 180ms ease-out; }
+  .reminder-message { animation: reminder-text 450ms ease-out; }
+  .reminder-overlay[data-closing="true"][open] { animation: reminder-out 140ms ease-in both; }
+  @keyframes reminder-out { to { opacity: 0; transform: translateY(5px); } }
+  @keyframes reminder-in { from { opacity: 0; transform: translateY(8px); } }
+  @keyframes reminder-text { from { opacity: .35; clip-path: inset(0 0 65% 0); } }
+}

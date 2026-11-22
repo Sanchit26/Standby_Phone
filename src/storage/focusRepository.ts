@@ -1,6 +1,5 @@
 import type { StandbyDatabase } from './database.ts'
 import { advance, restoreTimer, validDuration, type Timer, type TimerAction } from '../components/timer/model.ts'
-import { recordFocusCompletion } from './questLedger.ts'
 import type { FocusSession } from '../types/models.ts'
 
 export function completedToday(sessions: readonly FocusSession[], now: number) {
@@ -22,7 +21,7 @@ export function completedToday(sessions: readonly FocusSession[], now: number) {
 
 export function createFocusRepository(db: StandbyDatabase) {
   async function apply(action: TimerAction, now = Date.now(), legacy?: unknown) {
-    return db.transaction('rw', db.timerState, db.focusSessions, db.tasks, db.xpEvents, db.achievements, async () => {
+    return db.transaction('rw', db.timerState, db.focusSessions, db.tasks, async () => {
       const row = await db.timerState.get('current')
       const current = row ? restoreTimer(row.timer, now) : restoreTimer(legacy, now, true)
       if (action.type === 'start' && action.taskId && !await db.tasks.get(action.taskId)) {
@@ -42,7 +41,6 @@ export function createFocusRepository(db: StandbyDatabase) {
         await db.focusSessions.add(session)
         if (next.status === 'completed') {
           finishedLabel = next.label
-          await recordFocusCompletion(db, session, now)
         }
       }
       if (action.type === 'reset' || action.type === 'switch') next = { status: 'idle', mode: action.type === 'switch' ? action.mode : current.mode }

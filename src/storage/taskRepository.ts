@@ -1,7 +1,6 @@
 import type { StandbyDatabase } from './database.ts'
 import { newEntity } from './entity.ts'
 import { buildTaskTree, categoryColors, repairTaskLinks, subtree } from './taskTree.ts'
-import { recordTaskCompletion } from './questLedger.ts'
 import type { Task, TaskCategory } from '../types/models.ts'
 
 type TaskFields = Pick<Task, 'title' | 'description' | 'dueDate' | 'categoryId' | 'parentId'>
@@ -21,7 +20,7 @@ function nextOrder(items: readonly { sortOrder: number }[]) {
 export function createTaskRepository(db: StandbyDatabase) {
   const snapshot = async () => buildTaskTree(await db.categories.toArray(), await db.tasks.toArray())
   const write = <T>(operation: (tree: Awaited<ReturnType<typeof snapshot>>, now: number) => Promise<T>) =>
-    db.transaction('rw', db.categories, db.tasks, db.xpEvents, db.achievements, async () => {
+    db.transaction('rw', db.categories, db.tasks, async () => {
       const now = Date.now()
       const result = await operation(await snapshot(), now)
       const changes = repairTaskLinks(await snapshot())
@@ -87,11 +86,6 @@ export function createTaskRepository(db: StandbyDatabase) {
         const completed = progress.done !== progress.total
         const branch = subtree(tree, task)
         await db.tasks.bulkPut(branch.map(row => ({ ...row, completed, updatedAt: now })))
-        if (completed) {
-          const afterTree = buildTaskTree(await db.categories.toArray(), await db.tasks.toArray())
-          const leaves = branch.filter(t => !tree.children.has(t.id)).map(t => t.id)
-          await recordTaskCompletion(db, tree, afterTree, task.categoryId, leaves, now)
-        }
       })
     },
 

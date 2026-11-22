@@ -15,7 +15,7 @@ Use Node 24 and npm. Run `npm ci`, then `npm run dev`. Use `npm test` for timer,
 - **Themes** share components and use global CSS tokens selected on the document root. Register a theme in `src/themes/types.ts` and supply its tokens in `index.css`. Settings switches themes immediately.
 - **Structured storage** lives in Dexie. Version 2 retains the four original tables and keys, adds timestamps, and migrates reminders to the in-app channel. Legacy records without historical timestamps use migration time. Tasks reference a category and optionally a parent in that category. Use the asynchronous functions in `src/storage/repositories.ts` for categories, tasks and focus sessions.
 - **Timers** use `useTimer().dispatch(action)` for start, pause, resume and reset. A running timer stores a wall-clock deadline. A paused timer stores the remaining milliseconds. Completion reconciles on expiry, startup and resume. Manual device-time changes affect a running deadline.
-- **Lifecycle and reminders** use the Capacitor App event on Android and visibility/pageshow events in browsers. A future foreground presenter can query `inAppReminders.due()` on resume, then acknowledge display with `markDelivered()`. Delivery history stays in IndexedDB. Suspended or closed apps cannot show these in-app reminders until they run again. Native notification delivery is a later milestone.
+- **Lifecycle and reminders** use Capacitor App events on Android and visibility/pageshow events in browsers. The foreground scheduler observes persisted deadlines and reconciles on resume.
 
 ## Android
 
@@ -63,6 +63,18 @@ Suspended JavaScript resumes reconciliation when Standby becomes active, or on t
 
 Swipe left from Standby to manage to-do list categories. Each category shows its own actionable-task progress. Start Task selects that category for Standby.
 
+## Voice Reminders
+
+Open Settings → Voice Reminders to add a custom message. Schedule it for a specific local date and time, a daily wall-clock time, or an interval of at least five minutes. Edit, disable, or delete reminders from the list. The editor provides a test button and a choice of available offline voices, rate, and volume.
+
+While Standby is active, the scheduler claims each occurrence and advances the deadline in one Dexie transaction. Daily reminders follow local wall-clock time and are limited to one delivery per local date. Intervals retain their cadence when reconciling a missed occurrence. On resume, occurrences more than one minute late are skipped and repeating schedules advance to the next future deadline. Up to four current occurrences are presented in scheduled-time order, with ID breaking ties. Additional simultaneous occurrences are logged as skipped. The overlay has a Silence / dismiss button and honors reduced motion.
+
+History shows scheduled and actual trigger times, spoken completion, silence, skips, and speech errors. Legacy acknowledgments and interrupted claims remain unconfirmed. Clearing history leaves reminder schedules intact.
+
+Android uses the platform text-to-speech engine and requires a compatible, installed offline voice. The browser uses local Speech Synthesis voices when available. Test Voice reports a missing engine or offline voice. Suspended, force-stopped, and terminated apps have no delivery guarantee. A later native scheduler can reuse the occurrence-claim and history boundary. Phase 11 adds no background service.
+
+The obsolete XP and achievement writers and backfill have been retired. Historical tables remain intact. Task progress remains per category, and focus sessions retain their IDs.
+
 ## Sanctuary and Calendar
 
 Swipe vertically in Sanctuary to browse the import screen, quote and imported media. Open Library with its corner button, a long press, or G while Sanctuary is focused. The library can change the quote, preview and import media, reorder or remove imports, and set the default. The current selection is saved and shared by the Sanctuary widget. Its preview uses the quote, a small image, or media metadata. Videos only decode on the full page.
@@ -71,7 +83,7 @@ Videos start muted, loop inline, and pause when covered, backgrounded, or left. 
 
 Imports use origin-private files where streaming writes are available, with a Dexie Blob fallback. Metadata and selection are stored separately in Dexie. Import limits are 512 MiB for private files and 32 MiB for fallback, subject to available storage. Android WebView playback, app-restart persistence, and system-edge gestures require physical-device testing.
 
-The compact Calendar displays one dot per date with saved events, using the same reactive local-date query as the full Calendar. Dots update after creating, moving, or deleting events.
+The compact Calendar displays one dot per date with saved events, using the same reactive local-date query as the full Calendar. Dots update after creating, moving, or deleting events. A future Android Calendar Provider adapter can use the same event repository and day queries, with stable provider IDs for reconciliation. The current phase uses only locally created events and requests no calendar permissions.
 
 ## Visual themes
 

@@ -27,7 +27,14 @@ export interface FocusSession extends Entity {
   endedAt?: number
   taskId?: string
 }
+export type ReminderSchedule = { kind: 'once'; at: number } | { kind: 'daily'; time: string } | { kind: 'interval'; minutes: number }
 export interface Reminder extends Entity {
+  schedule?: ReminderSchedule
+  voice?: string
+  rate?: number
+  volume?: number
+  timezone?: string
+  lastDay?: string
   title: string
   message?: string
   sound?: string
@@ -45,5 +52,6 @@ export interface MediaItem extends Entity {
 }
 export interface Delivery {
   id: string; reminderId: string; scheduledAt: number; triggeredAt?: number
-  status: 'pending' | 'spoken' | 'skipped' | 'error' | 'silenced'; error?: string
+  message?: string
+  status: 'unconfirmed' | 'pending' | 'spoken' | 'skipped' | 'error' | 'silenced'; error?: string
 }

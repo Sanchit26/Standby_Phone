@@ -1,7 +1,9 @@
 import { Ornament } from '../../themes/Ornament'
 import { useDisplay } from '../../app/contexts'
 import { themes, type ThemeId } from '../../themes/types'
+import { VoiceReminders } from './VoiceReminders'
 import './settings.css'
+import './voiceReminders.css'
 
 export function Settings() {
   const { prefs, update } = useDisplay()
@@ -16,5 +18,6 @@ export function Settings() {
         </select>
       </label>
     </div>
+    <VoiceReminders />
   </section>
 }
