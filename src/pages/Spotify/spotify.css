@@ -1,0 +1,31 @@
+.playback {
+  --artwork-size: clamp(64px, min(10vw, 24vh), 122px);
+  display: grid;
+  grid-template-columns: var(--artwork-size) minmax(0, 1fr);
+  align-items: center;
+  gap: clamp(.65rem, 2vw, 1.5rem);
+}
+.record-sleeve {
+  display: grid;
+  place-items: center;
+  aspect-ratio: 1;
+  overflow: hidden;
+  background: var(--surface);
+  border: 1px solid var(--theme-divider);
+  border-radius: 6px;
+  color: var(--accent);
+}
+.record-sleeve img { width: 100%; height: 100%; object-fit: cover; }
+.record-sleeve svg { width: 40%; height: auto; }
+.playback p { margin: .4rem 0 0; }
+.playback-actions { display: flex; flex-wrap: wrap; gap: .25rem; margin-block: .7rem; }
+.playback-actions .widget-action { min-width: 36px; min-height: 36px; }
+.media-page { display: grid; align-content: center; }
+.media-page .workspace-panel { padding: clamp(.85rem, 3.5vw, 3rem); }
+.media-page .playback { --artwork-size: clamp(112px, min(26vw, 49vh), 280px); }
+.media-page .playback-actions .widget-action { min-width: 44px; min-height: 44px; }
+.media-page .workspace-panel > p { margin-top: .9rem; font-size: .85rem; }
+[data-theme="dark-fantasy-rpg"] .record-sleeve { border-radius: 0; background: var(--background); }
+@media (max-width: 420px) {
+  .media-page .playback { --artwork-size: 88px; }
+}

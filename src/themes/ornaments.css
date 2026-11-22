@@ -89,7 +89,6 @@
   overflow: visible;
 }
 [data-theme="dark-fantasy-rpg"] .widget-frame .widget-carousel { min-height: clamp(136px, 48vh, 432px); }
-[data-theme="dark-fantasy-rpg"] .widget-frame .widget-indicators { top: calc(100% + clamp(13px, 4.6vh, 41px)); }
 [data-theme="dark-fantasy-rpg"] .widget-frame .tasks-list {
   gap: .12em;
   max-height: min(44vh, 8.6em);
@@ -108,8 +107,7 @@
   color: var(--theme-check);
   background: var(--background);
 }
-[data-theme="dark-fantasy-rpg"] :is(.tasks-heading h2, .widget-title, .quest-panel h2, .quest-hub h1,
-  .gallery-heading h2, .widget-dialog-header h2, .task-form-dialog h2, .theme-utility h1) {
+[data-theme="dark-fantasy-rpg"] :is(.tasks-heading h2, .widget-title, .gallery-heading h2, .widget-dialog-header h2, .task-form-dialog h2) {
   color: var(--ornament-parchment);
   font-family: var(--theme-font-heading);
 }
@@ -118,18 +116,18 @@
   border-bottom: 1px solid var(--theme-divider);
 }
 [data-theme="dark-fantasy-rpg"] .widget-frame .tasks-percent { color: var(--accent); }
-[data-theme="dark-fantasy-rpg"] :is(.widget-progress, .quest-hub progress) {
+[data-theme="dark-fantasy-rpg"] .widget-progress {
   padding: 1px;
   border: 1px solid var(--ornament-bronze);
   border-radius: 2px;
   background: var(--background);
   accent-color: var(--theme-progress);
 }
-[data-theme="dark-fantasy-rpg"] :is(.widget-progress, .quest-hub progress)::-webkit-progress-bar {
+[data-theme="dark-fantasy-rpg"] .widget-progress::-webkit-progress-bar {
   background: var(--background);
   border-radius: 0;
 }
-[data-theme="dark-fantasy-rpg"] :is(.widget-progress, .quest-hub progress)::-webkit-progress-value {
+[data-theme="dark-fantasy-rpg"] .widget-progress::-webkit-progress-value {
   background: var(--theme-progress);
   border-radius: 0;
 }
@@ -152,18 +150,5 @@
   border-color: var(--ornament-highlight);
   color: var(--ornament-parchment);
 }
-[data-theme="dark-fantasy-rpg"] .quest-hub { --quest-line: var(--theme-divider); }
-[data-theme="dark-fantasy-rpg"] .quest-hub :is(.quest-panel, .quest-hero) {
-  padding: .7rem clamp(.65rem, 1.5vw, 1.25rem);
-  background: var(--surface);
-  border: 0;
-}
-[data-theme="dark-fantasy-rpg"] .quest-achievements li {
-  padding-inline: .5em;
-  border: 1px solid var(--theme-divider);
-  margin-block: .42em;
-}
-[data-theme="dark-fantasy-rpg"] .quest-achievements [data-unlocked="true"] { border-color: var(--ornament-bronze); }
-[data-theme="dark-fantasy-rpg"] .theme-utility { max-width: 42rem; padding: 1rem; }
-.theme-utility:has(select) label { display: inline-flex; align-items: center; gap: .5rem; margin-top: .65rem; }
-.theme-utility select:focus-visible { outline: 2px solid var(--theme-focus); }
+
+[data-theme="dark-fantasy-rpg"] .task-progress { --theme-progress: #bb6057; }

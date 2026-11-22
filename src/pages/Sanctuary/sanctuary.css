@@ -1,0 +1,49 @@
+.sanctuary {
+  position: relative;
+  height: 100%;
+  min-width: 0;
+  background: var(--background);
+}
+.ambient-stage {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  touch-action: none;
+  text-align: center;
+}
+.ambient-stage > :is(div, blockquote, p) { width: min(100%, 54rem); padding: 3.5rem 1.25rem; }
+.ambient-stage h1, .ambient-stage blockquote p {
+  color: var(--foreground);
+  font-size: clamp(1.35rem, min(4vw, 8vh), 3.25rem);
+  line-height: 1.2;
+}
+[data-theme="dark-fantasy-rpg"] .ambient-stage :is(h1, blockquote p) { font-family: var(--theme-font-heading); }
+.ambient-stage p { margin: .5rem 0 .75rem; overflow-wrap: anywhere; }
+.ambient-stage cite { display: block; margin-block: 0 .85rem; color: var(--muted); font-size: .9rem; }
+.ambient-stage .ambient-asset { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; user-select: none; }
+
+.mini-clock, .library-button { position: absolute; z-index: 1; }
+.mini-clock {
+  inset: .9rem auto auto .9rem;
+  padding: .35rem .65rem;
+  background: color-mix(in srgb, var(--background) 88%, transparent);
+  border-radius: 4px;
+  font-size: .85rem;
+  font-variant-numeric: tabular-nums;
+  pointer-events: none;
+}
+.library-button { inset: .65rem .9rem auto auto; }
+.import-preview { display: grid; place-items: center; background: var(--background); }
+.import-preview .ambient-asset { width: 100%; max-height: 42dvh; object-fit: contain; }
+.library-row {
+  display: flex;
+  align-items: center;
+  gap: .45rem;
+  flex-wrap: wrap;
+  padding-block: .55rem;
+  margin-top: .3rem;
+  border-top: 1px solid var(--theme-divider);
+}
+.library-row strong { flex: 1 1 12rem; min-width: 0; overflow-wrap: anywhere; }

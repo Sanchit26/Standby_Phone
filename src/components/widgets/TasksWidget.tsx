@@ -53,16 +53,17 @@ export function TasksWidget({ expanded, categoryId, onSelect }: { expanded: bool
     }
   }
 
-  return <section className="tasks-widget" aria-labelledby="tasks-heading"
+  return <section className="tasks-widget" aria-label={categoryId ? "Category tasks" : undefined}
+    aria-labelledby={categoryId ? undefined : "tasks-heading"}
     style={active?.color && categoryColors[active.color]
       ? { '--widget-accent': categoryColors[active.color] } as CSSProperties : undefined}>
-    <header className="tasks-heading">
+    {!categoryId && <header className="tasks-heading">
       <h2 id="tasks-heading" title={active?.name}>{active?.name ?? 'Tasks'}</h2>
       {!!count?.total && <span className="tasks-percent">{Math.round(count.percent)}%</span>}
-    </header>
+    </header>}
     {!!count?.total && <>
       <progress className="widget-progress task-progress" aria-label="Task completion" value={count.done} max={count.total} />
-      <div className="tasks-meta"><span>{count.done} of {count.total} complete</span></div>
+      <div className="tasks-meta"><span>{count.done} of {count.total} complete{categoryId && " · " + Math.round(count.percent) + "%"}</span></div>
     </>}
     {error && <p role="alert">{error}</p>}
     {expanded && (active || categoryId) ? <TaskEditor tree={tree} active={active} select={onSelect ?? (() => {})} rows={rows} open={open} expand={expand}

@@ -1,5 +1,6 @@
 import { Disc3, Play, SkipBack, SkipForward } from 'lucide-react'
 import { Ornament } from '../../themes/Ornament'
+import './spotify.css'
 
 interface MediaSource {
   track?: { title: string; artist: string; artwork?: string }
@@ -24,6 +25,10 @@ export function MediaWidget() {
   </section>
 }
 export function Spotify() {
-  return <section className="workspace-page media-page theme-panel"><Ornament /><MediaWidget />
-    <p>Playback controls require a connected media session. Open Spotify to listen.</p></section>
+  return <section className="workspace-page media-page">
+    <div className="workspace-panel theme-panel">
+      <Ornament /><MediaWidget />
+      <p>Playback controls require a connected media session. Open Spotify to listen.</p>
+    </div>
+  </section>
 }

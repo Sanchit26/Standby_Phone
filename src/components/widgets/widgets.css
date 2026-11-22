@@ -52,11 +52,6 @@
 .quote-widget blockquote { margin: .5em 0 .7em; }
 .quote-widget blockquote p { margin: 0; color: var(--foreground); font-size: 1.17em; line-height: 1.4; }
 .quote-widget footer { margin-top: .35em; color: var(--muted); font-size: .8em; }
-.media-art { width: 1.7em; height: 1.7em; color: var(--widget-accent); margin-bottom: .4em; }
-.media-controls { display: flex; gap: 1.5em; color: var(--muted); margin-top: .75em; opacity: .65; }
-.media-controls svg { width: 1.2em; height: 1.2em; }
-.media-widget > p:last-child { font-size: .82em; }
-
 .widget-action {
   display: inline-grid;
   place-items: center;
@@ -70,7 +65,7 @@
   cursor: pointer;
 }
 .widget-action:disabled { opacity: .42; cursor: default; }
-.widget-action:focus-visible, .widget-gallery input:focus-visible { outline: 2px solid var(--widget-accent); outline-offset: 2px; }
+.widget-action:focus-visible, .widget-gallery input:focus-visible { outline: 2px solid var(--widget-accent, var(--theme-focus)); outline-offset: 2px; }
 .widget-action svg { width: 16px; height: 16px; }
 
 .widget-dialog[open] {

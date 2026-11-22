@@ -7,6 +7,7 @@ import { dayEvents, localDate, saveEvent } from '../../storage/calendar'
 import { Ornament } from '../../themes/Ornament'
 import { Modal } from '../../components/Modal'
 import type { CalendarEvent } from '../../types/models'
+import './calendar.css'
 
 const weekday = new Intl.DateTimeFormat(undefined, { weekday: 'short' })
 const blank = (day: string) => ({ day, title: '', description: '', allDay: true, start: '', end: '', color: '' })
@@ -42,7 +43,7 @@ function EventEditor({ day, event, saved, close }: { day: string; event?: Calend
     <label><input type="checkbox" checked={draft.allDay} onChange={e => set({ ...draft, allDay: e.target.checked })}/> All day</label>
     {!draft.allDay && <div className="form-row">{(['start','end'] as const).map(k => <label key={k}>{k === 'start' ? 'Start time' : 'End time'}
       <input type="time" value={draft[k]} onChange={e => field(k, e.target.value)} /></label>)}</div>}
-    {error && <p role="alert">{error}</p>}<button className="widget-action primary" disabled={busy}>Save event</button>
+    {error && <p role="alert">{error}</p>}<footer><button className="widget-action primary" disabled={busy}>Save event</button></footer>
   </form></Modal>
 }
 export function Calendar() {
@@ -58,30 +59,52 @@ export function Calendar() {
   const marks = useQuery(useCallback(() => db.events.where('day').between(monthStart, monthEnd).uniqueKeys(), [monthStart, monthEnd]))
   const [edit, setEdit] = useState<CalendarEvent | 'new'>()
   const [problem, fail] = useState('')
-  return <section className="workspace-page"><header className="page-heading"><h1>Calendar</h1><button className="widget-action" onClick={() => choose(undefined)}>Today</button></header>
-    <div className="calendar-spread"><section className="surface theme-panel"><Ornament />
-      <header className="page-heading"><button className="widget-action" aria-label="Previous month" onClick={() => choose(localDate(new Date(year, month - 1, 1)))}>‹</button>
-        <h2>{date.toLocaleDateString(undefined, { month: 'long', year: 'numeric' })}</h2>
-        <button className="widget-action" aria-label="Next month" onClick={() => choose(localDate(new Date(year, month + 1, 1)))}>›</button></header>
-      <div className="month-grid">{Array.from({ length: 7 }, (_, i) => <small key={'w'+i}>{weekday.format(new Date(2024, 0, 1 + i))}</small>)}
-        {Array.from({ length: (first.getDay() + 6) % 7 }, (_, i) => <span key={'b'+i}/>)}
-        {Array.from({ length: days }, (_, i) => {
-          const key = localDate(new Date(year, month, i + 1))
-          return <button key={key} aria-label={key} aria-pressed={key === day} aria-current={key === today ? 'date' : undefined}
-            data-event={marks.data?.includes(key)} onClick={() => choose(key)}>{i + 1}</button>
-        })}</div>
-    </section><section className="surface theme-panel"><Ornament />
-      <header className="page-heading"><h2>{date.toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}</h2>
-        <button className="widget-action primary" onClick={() => setEdit('new')}>Add event</button></header>
-      {(error || problem) && <p role="alert">{error || problem}</p>}
-      {events && !events.length && <p>No events scheduled.</p>}
-      {events?.map(item => <article key={item.id} className="agenda-item" style={{ borderColor: item.color || undefined }}>
-        <strong>{item.title}</strong><small>{item.allDay ? 'All day' : [item.start,item.end].filter(Boolean).join(' – ') || 'Time unspecified'}</small>
-        {item.description && <p>{item.description}</p>}<button className="widget-action" onClick={() => setEdit(item)}>Edit</button>
-        <button className="widget-action" onClick={async () => {
-          if (window.confirm('Delete this event?')) try { await db.events.delete(item.id) } catch { fail('Unable to delete event.') }
-        }}>Delete</button></article>)}
-    </section></div>
+  return <section className="workspace-page calendar-page">
+    <header className="page-heading">
+      <h1>Calendar</h1>
+      <button className="widget-action" onClick={() => choose(undefined)}>Today</button>
+    </header>
+    <div className="calendar-spread">
+      <section className="workspace-panel theme-panel">
+        <Ornament />
+        <header className="page-heading month-heading">
+          <button className="widget-action" aria-label="Previous month" onClick={() => choose(localDate(new Date(year, month - 1, 1)))}>‹</button>
+          <h2>{date.toLocaleDateString(undefined, { month: 'long', year: 'numeric' })}</h2>
+          <button className="widget-action" aria-label="Next month" onClick={() => choose(localDate(new Date(year, month + 1, 1)))}>›</button>
+        </header>
+        <div className="month-grid">
+          {Array.from({ length: 7 }, (_, i) => <small key={'w'+i}>{weekday.format(new Date(2024, 0, 1 + i))}</small>)}
+          {Array.from({ length: (first.getDay() + 6) % 7 }, (_, i) => <span key={'b'+i} />)}
+          {Array.from({ length: days }, (_, i) => {
+            const key = localDate(new Date(year, month, i + 1))
+            return <button key={key} aria-label={key} aria-pressed={key === day} aria-current={key === today ? 'date' : undefined}
+              data-event={marks.data?.includes(key)} onClick={() => choose(key)}>{i + 1}</button>
+          })}
+        </div>
+      </section>
+      <section className="calendar-agenda workspace-panel theme-panel">
+        <Ornament />
+        <header className="page-heading">
+          <h2>{date.toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}</h2>
+          <button className="widget-action primary" onClick={() => setEdit('new')}>Add event</button>
+        </header>
+        <div className="agenda-list">
+          {(error || problem) && <p role="alert">{error || problem}</p>}
+          {events && !events.length && <p>No events scheduled.</p>}
+          {events?.map(item => <article key={item.id} className="agenda-item" style={{ borderColor: item.color || undefined }}>
+            <strong>{item.title}</strong>
+            <small>{item.allDay ? 'All day' : [item.start, item.end].filter(Boolean).join(' – ') || 'Time unspecified'}</small>
+            {item.description && <p>{item.description}</p>}
+            <div className="page-actions">
+              <button className="widget-action" onClick={() => setEdit(item)}>Edit</button>
+              <button className="widget-action" onClick={async () => {
+                if (window.confirm('Delete this event?')) try { await db.events.delete(item.id) } catch { fail('Unable to delete event.') }
+              }}>Delete</button>
+            </div>
+          </article>)}
+        </div>
+      </section>
+    </div>
     {edit && <EventEditor day={day} event={edit === 'new' ? undefined : edit} close={() => setEdit(undefined)}
       saved={d => { choose(d); setEdit(undefined) }}/>}
   </section>

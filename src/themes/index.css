@@ -1,5 +1,6 @@
 @import "tailwindcss";
 @import "./ornaments.css";
+@import "../app/layout.css";
 
 :root, [data-theme="amoled-minimal"] {
   color-scheme: dark;
@@ -32,15 +33,3 @@
   --theme-font-heading: Georgia, "Times New Roman", serif;
   --theme-font-display: "Courier New", monospace;
 }
-html, body, #root { min-height: 100%; margin: 0; }
-body { font-family: system-ui, sans-serif; background: var(--background); color: var(--foreground); }
-.app-shell { min-height: 100vh; background: var(--background); }
-main { padding: 2rem; } h1 { font-size: 1.5rem; font-weight: 600; } p { color: var(--muted); margin-top: 1rem; }
-
-.dev-nav { display: flex; gap: 1rem; flex-wrap: wrap; padding: 1rem 2rem; background: var(--surface); } .dev-nav a { color: var(--muted); } .dev-nav a.active { color: var(--accent); }
-.app-shell { display: flex; flex-direction: column; }
-main { flex: 1; touch-action: pan-y pinch-zoom; }
-
-
-
-select { background: var(--surface); color: var(--foreground); padding: .5rem; }

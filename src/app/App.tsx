@@ -1,3 +1,4 @@
+import { useLayoutEffect, useRef } from 'react'
 import { useTimer } from './contexts'
 import { Route, Routes, useLocation } from 'react-router-dom'
 import { Standby } from '../pages/Standby/Standby'
@@ -11,9 +12,11 @@ import { Spotify } from '../pages/Spotify/Spotify'
 export function App() {
   const gesture = usePageSwipe()
   const { notice } = useTimer()
-  const { search } = useLocation()
+  const { pathname, search } = useLocation()
+  const viewport = useRef<HTMLElement>(null)
+  useLayoutEffect(() => { viewport.current?.scrollTo(0, 0) }, [pathname])
   return <div className="app-shell">
-    <main tabIndex={0} {...gesture}><Routes>
+    <main ref={viewport} className="app-viewport" tabIndex={0} {...gesture}><Routes>
       <Route path="/" element={<Standby />} />
       <Route path="/quests" element={<QuestHub />} />
       <Route path="/calendar" element={<Calendar />} />

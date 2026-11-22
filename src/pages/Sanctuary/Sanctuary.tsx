@@ -9,6 +9,7 @@ import { useWidgetGestures } from '../../hooks/useWidgetGestures'
 import { onResume } from '../../services/lifecycle'
 import { importMedia, library, loadMedia, mediaKind, preferred, removeMedia, reorderMedia, setDefault } from '../../storage/media'
 import type { MediaItem } from '../../types/models'
+import './sanctuary.css'
 
 function MiniClock() {
   const { prefs } = useDisplay()
@@ -41,7 +42,7 @@ function Source({ file, kind, name, preview, ready }: {
   if (!url) return null
   const fail = () => { setBroken(true); ready?.(false) }
   return broken ? <p role="alert">This device cannot display this file. Choose a supported format or codec.</p>
-    : kind === 'image' ? <img className="ambient-asset" src={url} alt={name} onLoad={() => ready?.(true)} onError={fail}/>
+    : kind === 'image' ? <img className="ambient-asset" src={url} alt={name} draggable={false} onLoad={() => ready?.(true)} onError={fail}/>
     : <video className="ambient-asset" ref={video} src={url} aria-label={name} playsInline loop muted autoPlay controls={preview}
         onLoadedData={() => ready?.(true)} onError={fail}/>
 }

@@ -1,80 +1,31 @@
-.app-shell:has(.quest-hub) {
-  height: 100vh;
-  height: 100dvh;
-  min-height: 0;
-  padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
-}
-main:has(.quest-hub) { min-height: 0; padding: 0; }
-.quest-hub {
-  --quest-ink: var(--standby-accent, var(--accent));
-  --quest-line: var(--surface);
-  height: 100%;
-  overflow-y: auto;
-  overscroll-behavior: contain;
-  padding: clamp(15px, 3.8vh, 30px) clamp(18px, 4vw, 64px) 26px;
-  font-size: clamp(.83rem, 1.6vw, 1.05rem);
-}
-[data-theme="dark-fantasy-rpg"] .quest-hub { --quest-line: #48382c; }
-[data-theme="dark-fantasy-rpg"] .quest-hub :is(h1, h2, .quest-level strong) { font-family: Georgia, serif; }
-.quest-hub > h1 { font-size: clamp(1.65rem, 4vw, 3.25rem); line-height: 1.1; letter-spacing: -.035em; margin-bottom: .55em; }
-.quest-hero {
+.list-grid {
   display: grid;
-  grid-template-columns: minmax(160px, 1fr) minmax(0, 2fr);
-  align-items: center;
-  gap: clamp(1rem, 4vw, 4rem);
-  border-block: 1px solid var(--quest-line);
-  background: color-mix(in srgb, var(--surface) 56%, var(--background));
-  padding: clamp(.7rem, 2.5vh, 1.35rem) clamp(.7rem, 1.8vw, 1.65rem);
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 17rem), 1fr));
+  gap: var(--page-gap);
+  max-width: 65rem;
 }
-.quest-level { display: flex; gap: .8rem; align-items: center; }
-.quest-level > svg { width: 2em; height: 2em; color: var(--quest-ink); }
-.quest-level span, .quest-xp span { color: var(--muted); font-size: .82em; }
-.quest-level strong { display: block; font-size: clamp(1.45rem, 3.1vw, 2.5rem); line-height: 1.1; }
-.quest-xp { position: relative; }
-.quest-xp > div { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: .2rem .6rem; margin-bottom: .4em; }
-.quest-xp strong { color: var(--quest-ink); font-size: 1.3em; }
-.quest-hub progress { display: block; width: 100%; height: .45em; accent-color: var(--quest-ink); background: var(--surface); border-radius: 999px; }
-.quest-hub progress::-webkit-progress-bar { background: var(--surface); border-radius: 999px; }
-.quest-hub progress::-webkit-progress-value { background: var(--quest-ink); border-radius: 999px; }
-.quest-xp progress { height: .65em; }
-.quest-xp .quest-level-up { position: absolute; right: 0; top: calc(100% + .2rem); color: var(--quest-ink); }
-.quest-columns { display: grid; grid-template-columns: minmax(0, 1.12fr) minmax(0, 1fr); align-items: start; gap: 1.1rem clamp(1rem, 3vw, 2.5rem); margin-top: 1.2rem; }
-.quest-panel { min-width: 0; }
-.quest-panel-heading { display: flex; flex-wrap: wrap; gap: .25rem .6rem; justify-content: space-between; align-items: center; min-height: 40px; border-bottom: 1px solid var(--quest-line); }
-.quest-panel-heading h2 { display: flex; gap: .45em; align-items: center; font-size: 1.28em; font-weight: 700; }
-.quest-panel-heading h2 svg { width: 1.05em; height: 1.05em; color: var(--quest-ink); }
-.quest-panel-heading time, .quest-panel-heading > span, .quest-panel p, .quest-panel small { color: var(--muted); font-size: .86em; }
-.quest-panel p { margin-top: .6em; }
-.quest-filters { display: flex; gap: .2rem; }
-.quest-hub button { cursor: pointer; }
-.quest-hub :is(button, a):focus-visible { outline: 2px solid var(--quest-ink); outline-offset: 2px; }
-.quest-filters button, .quest-more { color: var(--muted); font-size: .82em; padding: .25rem .55rem; min-height: 38px; }
-.quest-filters button[aria-pressed="true"] { color: var(--quest-ink); background: var(--surface); border-radius: 5px; }
-.quest-objectives li, .quest-achievements li, .quest-recent li { min-width: 0; display: grid; align-items: center; gap: .55rem; border-bottom: 1px solid var(--quest-line); }
-.quest-objectives li { grid-template-columns: 44px minmax(0, 1fr) auto; min-height: 54px; padding-inline-start: calc(var(--quest-indent) * .55rem); }
-.quest-objectives li > div { padding-block: .35rem; }
-.quest-panel li strong, .quest-panel li small { display: block; overflow-wrap: anywhere; }
-.quest-objectives small { color: var(--category-ink, var(--muted)); }
-.quest-check, .quest-expand { width: 44px; height: 44px; display: grid; place-items: center; color: var(--quest-ink); }
-.quest-check::before { content: ''; grid-area: 1 / 1; width: 20px; height: 20px; border: 1px solid currentColor; border-radius: 5px; }
-.quest-check svg, .quest-expand svg { width: 15px; height: 15px; }
-.quest-check svg { grid-area: 1 / 1; }
-.quest-check[aria-checked="mixed"] { position: relative; }
-.quest-check[aria-checked="mixed"]::before { position: absolute; }
-.quest-daily li { padding-block: .55em; }
-.quest-daily li > div { display: flex; justify-content: space-between; gap: .4rem; margin-bottom: .3em; }
-.quest-daily li strong { color: var(--quest-ink); font-size: .85em; }
-.quest-achievements li { grid-template-columns: 1.4em minmax(0, 1fr); align-items: start; padding: .55em 0; }
-.quest-achievements svg { width: 1.12em; height: 1.12em; margin-top: .16em; color: var(--muted); }
-.quest-achievements [data-unlocked="true"] svg { color: var(--quest-ink); }
-.quest-stack { display: grid; gap: 1.1rem; }
-.quest-streak { display: flex; gap: 1.35rem; margin-top: .35em; }
-.quest-streak strong { display: block; color: var(--quest-ink); font-size: 1.65em; }
-.quest-streak span, .quest-days { color: var(--muted); font-size: .85em; }
-.quest-days { display: flex; flex-wrap: wrap; gap: .35rem; margin-top: .35em; }
-.quest-days li { background: var(--surface); padding: .15em .5em; border-radius: 4px; }
-.quest-recent li { grid-template-columns: minmax(0, 1fr) auto; padding: .5em 0; }
-.quest-recent li > span { color: var(--quest-ink); font-size: .86em; }
-@media (max-width: 540px) {
-  .quest-columns, .quest-hero { grid-template-columns: minmax(0, 1fr); }
+.list-card {
+  display: flex;
+  flex-direction: column;
+  gap: .5rem;
+  text-align: start;
+  cursor: pointer;
+}
+.list-card strong { font-size: clamp(1.1rem, 2.2vw, 1.5rem); line-height: 1.2; overflow-wrap: anywhere; }
+.list-card small, .list-card > span:not(.theme-ornament) { color: var(--muted); font-size: .85rem; }
+.list-card[data-active="true"] { border-color: var(--accent); }
+.list-card > span:not(.theme-ornament) { margin-top: auto; }
+.list-card .task-progress { margin: .15rem 0 0; }
+[data-theme="dark-fantasy-rpg"] .list-card strong { color: var(--ornament-parchment); font-family: var(--theme-font-heading); }
+
+.quest-hub .tasks-widget { font-size: 1rem; }
+.quest-hub .task-progress { margin-top: .25rem; }
+.quest-hub .task-editor-list { margin-block: .55rem 0; }
+.quest-hub .task-row-copy .task-title { white-space: normal; }
+.quest-hub .tasks-percent { font-weight: 700; }
+.quest-hub .task-toolbar { align-items: center; }
+.quest-hub .task-editor-list > li { border-color: var(--theme-divider); }
+@media (max-width: 740px) {
+  .quest-hub .task-editor-list > li { grid-template-columns: 40px 40px minmax(0, 1fr); }
+  .quest-hub .task-row-actions { grid-column: 3; justify-content: start; }
 }
