@@ -105,3 +105,17 @@
 .widget-frame .widget-carousel, .widget-frame .tasks-list { touch-action: none; }
 .widget-frame * { scrollbar-width: none; }
 .widget-frame *::-webkit-scrollbar { display: none; }
+
+.calendar-grid { grid-auto-rows: 1.55em; }
+.calendar-day { position: relative; }
+.calendar-day[data-event="true"]::after {
+  position: absolute;
+  inset: auto 0 1px;
+  width: 3px;
+  height: 3px;
+  margin-inline: auto;
+  border-radius: 50%;
+  background: var(--standby-accent);
+  content: '';
+}
+.calendar-day[aria-current="date"]::after { background: currentColor; }

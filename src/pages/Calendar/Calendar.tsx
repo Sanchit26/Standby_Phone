@@ -2,6 +2,7 @@ import { useCallback, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useClock } from '../../hooks/useClock'
 import { useQuery } from '../../hooks/useQuery'
+import { useEventDates } from '../../hooks/useEventDates'
 import { db } from '../../storage/database'
 import { dayEvents, localDate, saveEvent } from '../../storage/calendar'
 import { Ornament } from '../../themes/Ornament'
@@ -55,8 +56,7 @@ export function Calendar() {
   const first = new Date(year, month, 1)
   const days = new Date(year, month + 1, 0).getDate()
   const { data: events, error } = useEvents(day)
-  const monthStart = localDate(first), monthEnd = localDate(new Date(year, month + 1, 1))
-  const marks = useQuery(useCallback(() => db.events.where('day').between(monthStart, monthEnd).uniqueKeys(), [monthStart, monthEnd]))
+  const marks = useEventDates(year, month)
   const [edit, setEdit] = useState<CalendarEvent | 'new'>()
   const [problem, fail] = useState('')
   return <section className="workspace-page calendar-page">
@@ -78,7 +78,7 @@ export function Calendar() {
           {Array.from({ length: days }, (_, i) => {
             const key = localDate(new Date(year, month, i + 1))
             return <button key={key} aria-label={key} aria-pressed={key === day} aria-current={key === today ? 'date' : undefined}
-              data-event={marks.data?.includes(key)} onClick={() => choose(key)}>{i + 1}</button>
+              data-event={marks.data?.has(key)} onClick={() => choose(key)}>{i + 1}</button>
           })}
         </div>
       </section>

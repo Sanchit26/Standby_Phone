@@ -41,7 +41,7 @@ export interface CalendarEvent extends Entity {
   day: string; title: string; description: string; start: string; end: string; allDay: boolean; color: string
 }
 export interface MediaItem extends Entity {
-  name: string; kind: 'image' | 'video'; storage: 'file' | 'blob'; size: number; sortOrder: number
+  name: string; kind: 'image' | 'video'; storage: 'file' | 'blob'; mime?: string; size: number; sortOrder: number
 }
 export interface Delivery {
   id: string; reminderId: string; scheduledAt: number; triggeredAt?: number

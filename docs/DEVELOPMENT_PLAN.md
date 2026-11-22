@@ -11,7 +11,7 @@ Phases 1–9 establish the working foundation and landscape homepage. Later prom
 7. Countdown and focus timer interface — complete. Persistent sessions, timer controls, task links and local history.
 8. Quest Hub — complete. Offline XP ledger, task and focus objectives, daily quests, achievements, and streaks.
 9. Dark Fantasy RPG theme and AMOLED refinement — complete. Shared ornamental frames, styled panels and galleries, and bundled Fantasy Pixel glyphs.
-10. Sanctuary.
+10. Sanctuary refinement and compact Calendar indicators. Shared persistent selection, local media playback and library controls, and reactive event dots. Physical Android verification remains pending.
 11. Settings and preferences.
 12. JARVIS-style reminders and animations.
 13. Android integration and device optimization.

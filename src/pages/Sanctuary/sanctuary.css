@@ -47,3 +47,30 @@
   border-top: 1px solid var(--theme-divider);
 }
 .library-row strong { flex: 1 1 12rem; min-width: 0; overflow-wrap: anywhere; }
+
+.ambient-play { position: relative; z-index: 1; }
+.sanctuary-widget blockquote { margin-block: .55em; }
+.sanctuary-widget blockquote p {
+  margin: 0;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  overflow: hidden;
+  color: var(--foreground);
+}
+.sanctuary-widget cite { color: var(--muted); font-size: .8em; }
+.sanctuary-widget > .widget-action { margin-top: .5em; }
+
+.sanctuary-thumbnail {
+  float: right;
+  width: min(27%, 96px);
+  height: clamp(36px, 14vh, 96px);
+  object-fit: contain;
+  margin: .45em 0 .25em .55em;
+}
+.sanctuary-widget > p {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  overflow: hidden;
+}

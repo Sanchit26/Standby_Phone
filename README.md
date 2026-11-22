@@ -8,7 +8,7 @@ Use Node 24 and npm. Run `npm ci`, then `npm run dev`. Use `npm test` for timer,
 
 ## Architecture
 
-- **Navigation** uses React Router with hash URLs. Swipe left to advance through Settings, Standby, Quest Hub and Sanctuary. Swipe right to return. Each transition adds a history entry. Capacitor App's default Android back handler uses WebView history. The two ends stop. Development builds also show route links.
+- **Navigation** uses React Router with hash URLs. Swipe left to advance through Settings, Standby, Quest Hub, Calendar, Spotify and Sanctuary. Swipe right to return. Each transition adds a history entry. Capacitor App's default Android back handler uses WebView history. The two ends stop.
 - **Gestures** use Pointer Events on the page. Recognition requires 60 CSS pixels horizontally and a horizontal displacement at least 1.5 times the vertical displacement. Controls and gestures that start vertically are excluded. Put `data-page-swipe="off"` on any carousel or custom control that owns its own gestures.
 - **Shared state** uses separate display and timer contexts. `useDisplay().update(patch)` normalizes changes. Startup loads Preferences before mounting providers. Serialized writes preserve update order. Preferences include theme, clock format, seconds, face, widget and widget order. Unknown IDs fall back to registered defaults. New widgets append to the saved order. The old theme key remains readable.
 - **Faces and widgets** register a component under a stable ID in their respective registries under `src/components`. Faces declare compatible themes. Widget capabilities declare optional permission or native dependencies. An empty list denotes an offline widget. Digital and Tasks are the first entries. The clock owns its ticks.
@@ -39,9 +39,9 @@ To add a face, register its stable ID, component, theme compatibility and accent
 
 ## Standby widgets
 
-Swipe or drag horizontally in the right pane to change widgets. With the carousel focused, Left and Right do the same. Hold the widget or press G to open management. There you can enable widgets, reorder them, and choose the default used when the saved active widget is unavailable. Double-tap, double-click, or press Enter to expand the active widget. Close, Escape, and Back dismiss the overlay.
+Swipe or drag vertically in the right pane to change widgets. With the carousel focused, Up and Down do the same. Hold the widget or press G to open management. There you can enable widgets, reorder them, and choose the default used when the saved active widget is unavailable. Double-tap, double-click, or press Enter to expand the active widget. Close, Escape, and Back dismiss the overlay.
 
-Register new widgets in `src/components/widgets/registry.ts` with a stable ID, name, description, capability metadata and component. Display preferences store enabled widgets, order, default and active widget, and the quote index. Tasks, progress, and focus history read local Dexie data. Progress covers all saved tasks, and Tasks shows the selected category, falling back to the first populated category or the first category. Media is a display-only placeholder. Android hardware Back and physical gestures still need device verification.
+Register new widgets in `src/components/widgets/registry.ts` with a stable ID, name, description, capability metadata and component. Display preferences store enabled widgets, order, default and active widget, and the quote index. Tasks, progress, and focus history read local Dexie data. Tasks and Progress use the active category selected in Quest Hub. Media is a display-only placeholder. Android hardware Back and physical gestures still need device verification.
 
 ## Task management
 
@@ -61,13 +61,17 @@ Suspended JavaScript resumes reconciliation when Standby becomes active, or on t
 
 ## Quest Hub
 
-Swipe left from Standby to see objectives, adventurer progress, daily quests, achievements and recent activity. Objectives are the same tasks shown in Standby. Completing an actionable leaf awards 20 XP once per task ID. A completed focus session earns 1 XP per whole active minute, up to 120, with a minimum of one active minute. Cancelled sessions earn no XP. Finishing a category by completing tasks awards 50 XP if new leaf completions have been credited to that category since the last bonus. Reopening, reordering, moving, deleting or restoring tasks never removes earned XP or generates an award on its own.
+Swipe left from Standby to manage to-do list categories. Each category shows its own actionable-task progress. Start Task selects that category for Standby.
 
-Level 1 starts at zero. Advancing from level L costs 100 + 50 × (L − 1) XP. Daily quests count three first-time leaf completions, one qualifying completed focus session, and 45 qualifying focus minutes. They reset at local midnight and carry no bonus XP. A streak counts consecutive local dates with first-time leaf completion or qualifying focus activity. Yesterday's streak remains current until today's activity is logged or the day ends.
+## Sanctuary and Calendar
 
-Achievements unlock for the first, tenth and twenty-fifth leaf completions, the first qualifying focus session, a single session with 60 active minutes, and a three-day streak.
+Swipe vertically in Sanctuary to browse the import screen, quote and imported media. Open Library with its corner button, a long press, or G while Sanctuary is focused. The library can change the quote, preview and import media, reorder or remove imports, and set the default. The current selection is saved and shared by the Sanctuary widget. Its preview uses the quote, a small image, or media metadata. Videos only decode on the full page.
 
-Dexie v5 adds the XP ledger and achievement unlocks. Migration credits previously completed leaves toward lifetime totals without assigning completion dates, so they do not count toward daily quests or streaks. Historical focus receives XP only when explicit completion and elapsed focus time are recorded. We cannot infer past category cycles or tasks that were completed and later reopened. Physical Android scrolling, gestures and Back remain to be tested.
+Videos start muted, loop inline, and pause when covered, backgrounded, or left. Use Library to unmute the current video or switch between fit and fill. If autoplay is blocked, tap the playback prompt. No default video is bundled. Formats depend on the installed browser or Android WebView codecs.
+
+Imports use origin-private files where streaming writes are available, with a Dexie Blob fallback. Metadata and selection are stored separately in Dexie. Import limits are 512 MiB for private files and 32 MiB for fallback, subject to available storage. Android WebView playback, app-restart persistence, and system-edge gestures require physical-device testing.
+
+The compact Calendar displays one dot per date with saved events, using the same reactive local-date query as the full Calendar. Dots update after creating, moving, or deleting events.
 
 ## Visual themes
 

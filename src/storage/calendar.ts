@@ -5,6 +5,11 @@ import { newEntity } from './entity.ts'
 export function localDate(d: Date) {
   return [d.getFullYear(), String(d.getMonth() + 1).padStart(2, '0'), String(d.getDate()).padStart(2, '0')].join('-')
 }
+export async function eventDatesInMonth(db: StandbyDatabase, year: number, month: number) {
+  const first = localDate(new Date(year, month, 1))
+  const next = localDate(new Date(year, month + 1, 1))
+  return new Set(await db.events.where('day').between(first, next, true, false).uniqueKeys())
+}
 export const dayEvents = (db: StandbyDatabase, day: string) =>
   db.events.where('day').equals(day).sortBy('start')
 export async function saveEvent(db: StandbyDatabase, fields: Omit<CalendarEvent, 'id' | 'createdAt' | 'updatedAt'>, id?: string) {

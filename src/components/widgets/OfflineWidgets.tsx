@@ -1,5 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import type { Observable } from 'dexie'
+import { useEventDates } from '../../hooks/useEventDates'
+import { localDate } from '../../storage/calendar'
 import { TodayEvents } from '../../pages/Calendar/Calendar'
 import { useDisplay, useTimer } from '../../app/contexts'
 import { formatDuration } from '../timer/format'
@@ -42,12 +44,13 @@ export function CalendarWidget() {
   const month = now.getMonth()
   const days = new Date(year, month + 1, 0).getDate()
   const offset = (new Date(year, month, 1).getDay() + 6) % 7
+  const trailing = (7 - (offset + days) % 7) % 7
+  const { data: dates } = useEventDates(year, month)
   return <section className="widget-content calendar-widget">
     <header>
       <h2 className="widget-title">{now.toLocaleDateString(undefined, { month: 'long', year: 'numeric' })}</h2>
       <time dateTime={now.toISOString()}>{now.toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric' })}</time>
     </header>
-    <TodayEvents />
     <div className="calendar-grid">
       {Array.from({ length: 7 }, (_, index) => {
         const date = new Date(2024, 0, 1 + index)
@@ -56,9 +59,16 @@ export function CalendarWidget() {
         </span>
       })}
       {Array.from({ length: offset }, (_, index) => <span key={`blank-${index}`} aria-hidden="true" />)}
-      {Array.from({ length: days }, (_, index) => <span key={index}
-        aria-current={index + 1 === now.getDate() ? 'date' : undefined}>{index + 1}</span>)}
+      {Array.from({ length: days }, (_, index) => {
+        const day = index + 1
+        const hasEvents = dates?.has(localDate(new Date(year, month, day)))
+        return <span key={day} className="calendar-day" data-event={hasEvents}
+          title={hasEvents ? day + ', has events' : undefined}
+          aria-current={day === now.getDate() ? 'date' : undefined}>{day}</span>
+      })}
+      {Array.from({ length: trailing }, (_, index) => <span key={'end-' + index} aria-hidden="true" />)}
     </div>
+    <TodayEvents />
   </section>
 }
 
