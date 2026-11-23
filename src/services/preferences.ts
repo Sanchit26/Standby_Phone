@@ -15,6 +15,7 @@ export interface UserPreferences {
   quoteIndex: number
   taskCategory: string | null
   oledProtection: boolean
+  sanctuary: { imageFit: 'contain' | 'cover'; videoFit: 'contain' | 'cover'; muted: boolean }
   deviceCalendar: { enabled: boolean; ids: string[] }
 }
 
@@ -37,6 +38,7 @@ export function normalizePreferences(value: unknown): UserPreferences {
   const widgetDefault = hasId(widgets, raw.widgetDefault) && available.has(raw.widgetDefault)
     ? raw.widgetDefault : widgetEnabled.find(id => id !== 'media') ?? 'tasks'
   const device = raw.deviceCalendar as Partial<UserPreferences['deviceCalendar']> | undefined
+  const sanctuary = raw.sanctuary as Partial<UserPreferences['sanctuary']> | undefined
   return {
     theme,
     face: hasId(faces, raw.face) && faces[raw.face].themes.some(t => t === theme) ? raw.face : 'digital',
@@ -50,6 +52,11 @@ export function normalizePreferences(value: unknown): UserPreferences {
     deviceCalendar: { enabled: device?.enabled === true, ids: Array.isArray(device?.ids)
       ? [...new Set(device.ids.filter(id => typeof id === 'string' && /^\d{1,19}$/.test(id)))].sort().slice(0, 100) : [] },
     oledProtection: raw.oledProtection !== false,
+    sanctuary: {
+      imageFit: sanctuary?.imageFit === 'cover' ? 'cover' : 'contain',
+      videoFit: sanctuary?.videoFit === 'contain' ? 'contain' : 'cover',
+      muted: sanctuary?.muted !== false,
+    },
     taskCategory: typeof raw.taskCategory === 'string' && raw.taskCategory ? raw.taskCategory : null,
     quoteIndex: typeof raw.quoteIndex === 'number' && Number.isInteger(raw.quoteIndex) &&
       raw.quoteIndex >= 0 && raw.quoteIndex < quotes.length ? raw.quoteIndex : 0,

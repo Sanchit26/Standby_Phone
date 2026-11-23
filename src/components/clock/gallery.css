@@ -1,11 +1,10 @@
 .clock-gallery[open] {
   position: fixed;
-  inset: 0;
+  inset: var(--app-safe-top) var(--app-safe-right) var(--app-safe-bottom) var(--app-safe-left);
   margin: auto;
-  width: min(900px, calc(100vw - 32px));
+  width: min(900px, calc(var(--app-safe-width) - 32px));
   max-width: none;
-  max-height: min(620px, calc(100vh - 26px));
-  max-height: min(620px, calc(100dvh - 26px));
+  max-height: min(620px, calc(var(--app-safe-height) - 26px));
   display: flex;
   flex-direction: column;
   color: var(--foreground);

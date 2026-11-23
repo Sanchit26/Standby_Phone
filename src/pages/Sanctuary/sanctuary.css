@@ -4,6 +4,23 @@
   min-width: 0;
   background: var(--background);
 }
+.app-viewport:has(.sanctuary[data-video="true"]) { padding: 0; }
+.sanctuary[data-video="true"] .mini-clock {
+  top: calc(.9rem + var(--app-safe-top));
+  left: calc(.9rem + var(--app-safe-left));
+}
+.sanctuary[data-video="true"] .library-button {
+  top: calc(.65rem + var(--app-safe-top));
+  right: calc(.9rem + var(--app-safe-right));
+}
+.sanctuary-audio {
+  position: absolute;
+  z-index: 1;
+  right: calc(.9rem + var(--app-safe-right));
+  bottom: calc(.9rem + var(--app-safe-bottom));
+  min-width: 44px;
+  min-height: 44px;
+}
 .ambient-stage {
   position: absolute;
   inset: 0;
@@ -22,7 +39,7 @@
 [data-theme="dark-fantasy-rpg"] .ambient-stage :is(h1, blockquote p) { font-family: var(--theme-font-heading); }
 .ambient-stage p { margin: .5rem 0 .75rem; overflow-wrap: anywhere; }
 .ambient-stage cite { display: block; margin-block: 0 .85rem; color: var(--muted); font-size: .9rem; }
-.ambient-stage .ambient-asset { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; user-select: none; }
+.ambient-stage .ambient-asset { position: absolute; inset: 0; width: 100%; height: 100%; object-position: center; user-select: none; }
 
 .mini-clock, .library-button { position: absolute; z-index: 1; }
 .mini-clock {

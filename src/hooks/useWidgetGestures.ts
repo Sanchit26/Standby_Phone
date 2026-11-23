@@ -5,7 +5,8 @@ type Point = { x: number; y: number }
 type Press = Point & { id: number; moved: boolean; axis?: ReturnType<typeof gestureAxis>; scroll: HTMLElement | null; top: number; scrolling?: boolean; timer: number }
 const distance = (a: Point, b: Point) => Math.hypot(a.x - b.x, a.y - b.y)
 
-export function useWidgetGestures(change: (step: number) => void, manage?: () => void, expand?: () => void) {
+export function useWidgetGestures(change: (step: number) => void, manage?: () => void, expand?: () => void,
+  onTap?: (target: Element) => void) {
   const press = useRef<Press | null>(null)
   const tap = useRef<(Point & { at: number; type: string }) | null>(null)
   function clear() {
@@ -64,11 +65,13 @@ export function useWidgetGestures(change: (step: number) => void, manage?: () =>
         tap.current = null
         return
       }
+      onTap?.(event.target as Element)
+      if (!expand) return
       const now = performance.now()
       const last = tap.current
       if (last && now - last.at <= 320 && last.type === event.pointerType && distance(last, { x, y }) <= 24) {
         tap.current = null
-        expand?.()
+        expand()
       } else tap.current = { x, y, at: now, type: event.pointerType }
     },
     onPointerCancel: cancel,

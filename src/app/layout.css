@@ -1,3 +1,11 @@
+:root {
+  --app-safe-top: max(env(safe-area-inset-top, 0px), var(--standby-native-top, 0px));
+  --app-safe-right: max(env(safe-area-inset-right, 0px), var(--standby-native-right, 0px));
+  --app-safe-bottom: max(env(safe-area-inset-bottom, 0px), var(--standby-native-bottom, 0px));
+  --app-safe-left: max(env(safe-area-inset-left, 0px), var(--standby-native-left, 0px));
+  --app-safe-width: calc(100% - var(--app-safe-left) - var(--app-safe-right));
+  --app-safe-height: calc(100% - var(--app-safe-top) - var(--app-safe-bottom));
+}
 html, body, #root { margin: 0; height: 100%; }
 body { font-family: system-ui, sans-serif; background: var(--background); color: var(--foreground); }
 
@@ -6,7 +14,6 @@ body { font-family: system-ui, sans-serif; background: var(--background); color:
   flex-direction: column;
   height: 100vh;
   height: 100dvh;
-  padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
   overflow: hidden;
   background: var(--background);
 }
@@ -15,9 +22,14 @@ body { font-family: system-ui, sans-serif; background: var(--background); color:
   flex: 1;
   min-width: 0;
   min-height: 0;
+  padding: var(--app-safe-top) var(--app-safe-right) var(--app-safe-bottom) var(--app-safe-left);
   overflow: auto;
   overscroll-behavior: contain;
   touch-action: pan-y pinch-zoom;
+}
+
+@media (orientation: landscape) {
+  .app-viewport:has(.standby) { padding-inline: 0; }
 }
 
 .app-viewport:focus-visible { outline: 1px solid var(--theme-focus); outline-offset: -2px; }

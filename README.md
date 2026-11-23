@@ -49,7 +49,11 @@ adb -s YOUR_POCO_SERIAL shell am start -W -n com.standby.productivity/.MainActiv
 
 If ADB shows `unauthorized`, unlock the phone and accept the debugging prompt. If the phone is missing, try a data-capable cable and check the Windows USB driver. If Android reports an incompatible signature, stop and keep the installed copy and its data. An in-place update requires the same package ID and signing key. [Android ADB guide](https://developer.android.com/tools/adb)
 
-The native activity requests landscape and restores immersive mode when it regains focus. Android's edge gestures can reveal system bars temporarily, and some large Android displays can override a fixed orientation. Calendar synchronization requests `READ_CALENDAR` when enabled. The manifest also declares normal Internet access. Native speech uses the installed voice engine and brightness control applies to the Standby window without a system settings permission. Backup export uses the Android document picker.
+The native activity uses `sensorLandscape` to support both landscape positions. When the camera moves to the opposite side, Standby recalculates the safe insets and keeps the WebView edge-to-edge. Android's edge gestures can reveal system bars temporarily. If HyperOS keeps the phone in one position, turn on **Auto-rotate** and check its per-app display settings. Android may override orientation requests on large screens or in some windowing modes.
+
+Standby keeps the display on automatically while its activity is visible. The physical power button still turns the screen off. Android's normal timeout applies after leaving Standby. OLED protection can dim the display after 15 idle minutes while the screen stays on, and a touch restores brightness. The keep-awake behavior also applies with OLED protection disabled. [Android guidance on keeping the screen on](https://developer.android.com/develop/background-work/background-tasks/awake/screen-on)
+
+Calendar synchronization requests `READ_CALENDAR` when enabled. The manifest also declares normal Internet access. Native speech uses the installed voice engine and brightness control applies to the Standby window without a system settings permission. Backup export uses the Android document picker.
 
 ### POCO X5 Pro acceptance checklist
 
@@ -58,7 +62,7 @@ Run these checks on the phone and record pass or fail. Use disposable entries an
 | Check | Action and expected result |
 | --- | --- |
 | A. First launch | Open Standby from the launcher. The bundled dashboard opens without a server. Android may display its fullscreen tutorial. Standby requests Calendar access only when enabled. |
-| B. Landscape and fullscreen | Turn the phone and reveal the bars with an edge swipe. Standby stays in landscape, content clears the cutout, and the bars hide again after the gesture. |
+| B. Landscape and fullscreen | Rotate the phone 180 degrees, then hold it upright. Standby uses both landscape positions and stays in landscape when upright. Check the camera's new inset, the outer frame, and the clock gallery and page swipes after rotation. An edge swipe still reveals the system bars temporarily. |
 | C. Themes | Switch between AMOLED Minimal and Dark Fantasy RPG in Settings. Check the giant clock, small timer, right-side widgets, true black and the RPG frames for clipping and alignment. |
 | D. Clock gallery | Hold the clock, choose a face, close and reopen the app. The selected face persists. |
 | E. Swipes and widgets | Visit Settings ← Standby → Quest Hub → Calendar → Spotify → Sanctuary and reverse. Swipe vertically over the Standby widget and Sanctuary media. Double-tap a widget to expand it, hold it to manage it and verify task lists can still scroll. |
@@ -67,13 +71,11 @@ Run these checks on the phone and record pass or fail. Use disposable entries an
 | H. Google Calendar | Sync the selected Google calendars on the phone, enable **Show device calendar events**, grant read access and select calendars. Check a timed event, a recurring occurrence and an all-day event. Verify local-time display, widget dots, today's notice, read-only entries and selection persistence. Disable the integration or deny permission to confirm local events stay usable. |
 | I. Voice reminders | Select a voice, use **Test Voice**, then schedule a disposable foreground reminder. Check the overlay and announcement, Silence and Dismiss, and test speech again after returning from another app. |
 | J. Offline TTS | Install offline voice data in Android's text-to-speech settings before enabling airplane mode. Use **Test Voice** and run a foreground reminder. Audio should play through the installed voice. |
-| K. OLED mitigation | Keep Standby visible without input for over 15 minutes. Check that the screen dims, then touch the app and check immediate restoration. Repeat with Home, lock and unlock, turning protection off, and a reminder appearing while dimmed. While idle, check that any pixel shift stays subtle and clear of edges. |
-| L. Sanctuary | Import copies of a photo and a supported video. Check fit and fill, muted loop, playback controls, pause when leaving, the mini clock, and selection and order after restart. Test deletion only with a disposable import. |
+| K. OLED mitigation | Keep Standby visible without input for over 15 minutes. Check that it dims without sleeping, then touch to restore brightness. Repeat with Home, lock and unlock, turning protection off, and a reminder appearing while dimmed. |
+| L. Sanctuary | Import copies of a photo and a supported video. Check that video fills without stretching and photos fit by default. Tap the video, toggle audio, and wait for the control to hide. Check both playback preferences after relaunch, loop and pause behavior, and swipes and long press in both landscape positions. |
 | M. Restart | Reopen Standby and verify display preferences, test tasks, timer state, reminders and imported media. Export a backup and confirm the document picker can save it. |
 | N. Android Back | With the keyboard shown, press Back to dismiss it. With a task editor, widget or clock gallery open, press Back to dismiss the overlay first. With no overlay, verify Back returns through visited pages. |
-| O. Charging and extended use | Run on the charger for the intended session length. Check screen timeout, dimming, touch response, audio and video, and temperature. Lock and wake the phone to check timer and display recovery. |
-
-Standby currently follows the phone's screen timeout. For the 15-minute test, use a device setting that keeps the display on long enough. A future foreground-only option could set `FLAG_KEEP_SCREEN_ON` on the activity while the mounted display is needed. [Android guidance on keeping the screen on](https://developer.android.com/develop/background-work/background-tasks/awake/screen-on)
+| O. Charging and extended use | With a short phone timeout, confirm Standby remains visible past it. Press the power button to verify manual sleep still works. With Standby backgrounded, check that the normal timeout applies. During a longer charging test, check dimming, touch response, audio and temperature. |
 
 If Calendar is empty, first confirm the events are visible in Google Calendar on the POCO and the intended calendars are synced to Android. If Test Voice reports no offline voice, download the language through the installed engine while online and try again. If a video fails to play, try a small H.264 MP4 as a test and capture the original format and codec. Voice reminder delivery depends on the foreground scheduler and is unavailable while the app is force-stopped.
 
@@ -137,9 +139,13 @@ The obsolete XP and achievement writers and backfill have been retired. Historic
 
 Swipe vertically in Sanctuary to browse the import screen, quote and imported media. Open Library with its corner button, a long press, or G while Sanctuary is focused. The library can change the quote, preview and import media, reorder or remove imports, and set the default. The current selection is saved and shared by the Sanctuary widget. Its preview uses the quote, a small image, or media metadata. Videos only decode on the full page.
 
-Videos start muted, loop inline, and pause when covered, backgrounded, or left. Use Library to unmute the current video or switch between fit and fill. If autoplay is blocked, tap the playback prompt. No default video is bundled. Formats depend on the installed browser or Android WebView codecs.
+Videos default to **Fill**. Sanctuary centers and crops the video to the full landscape display while preserving its aspect ratio. Photos default to **Fit**. Use Library to switch between Fit and Fill. Standby saves the choices for photos and videos separately. Black bars encoded into a video can remain visible.
 
-Imports use origin-private files where streaming writes are available, with a Dexie Blob fallback. Metadata and selection are stored separately in Dexie. Import limits are 512 MiB for private files and 32 MiB for fallback, subject to available storage. Android WebView playback, app-restart persistence, and system-edge gestures require physical-device testing.
+Tap a playing video to show **Mute video** or **Unmute video** in the corner. The control hides after about three seconds. Library uses the same saved audio preference, which defaults to muted. Videos loop inline and pause when Library is open, Standby is backgrounded, or you leave Sanctuary. Use **Tap to play** if the browser or Android WebView blocks autoplay, especially when audio is enabled. Formats depend on the installed browser or WebView codecs.
+
+The optional Chromium regression suite runs against a local dev or preview server with `node tests/sanctuary.browser.mjs`. It uses Playwright Core from `STANDBY_PLAYWRIGHT_MODULE` or the local module path. Set `STANDBY_BROWSER` to an installed Chromium executable and `STANDBY_TEST_URL` to the server URL if it differs from `http://127.0.0.1:4173`.
+
+Imports use origin-private files where streaming writes are available, with a Dexie Blob fallback. Metadata and selection are stored separately in Dexie. Import limits are 512 MiB for private files and 32 MiB for fallback, subject to available storage. The Phase 13A.1 phone check covers fullscreen playback and system-edge gestures in both landscape positions.
 
 The Calendar agenda, compact widget dots, and Standby today notice combine local events with selected Android calendars. Local events can be edited or deleted in Standby. Device events are labeled read-only and can be opened in a compatible Android calendar app.
 

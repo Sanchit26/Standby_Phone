@@ -1,7 +1,7 @@
 .standby-timer-trigger { display: inline-block; max-width: 100%; cursor: pointer; border-radius: 5px; }
 .standby-timer-trigger:focus-visible { outline: 2px solid var(--accent); outline-offset: 5px; }
 .countdown-label, .countdown-value { display: block; }
-.widget-dialog.focus-panel[open] { width: min(630px, calc(100% - 32px)); }
+.widget-dialog.focus-panel[open] { width: min(630px, calc(var(--app-safe-width) - 32px)); }
 .focus-panel-body { overflow-y: auto; overscroll-behavior: contain; min-height: 0; padding: 0 1rem 1rem; }
 .focus-panel .countdown-value { font-size: clamp(1.4rem, 4vw, 2.25rem); }
 .focus-panel .countdown-label { font-size: .8rem; }
@@ -24,6 +24,6 @@
 .focus-history li { border-top: 1px solid var(--surface); padding: .4em 0; overflow-wrap: anywhere; }
 .focus-history li > span { display: block; color: var(--muted); }
 .focus-today { font-size: .84em; }
-.focus-toast { position: fixed; inset: auto 1rem max(1rem, env(safe-area-inset-bottom)) auto; max-width: calc(100% - 2rem); padding: .7rem 1rem; z-index: 2; background: var(--surface); border: 1px solid var(--accent); border-radius: 8px; overflow-wrap: anywhere; }
+.focus-toast { position: fixed; inset: auto calc(1rem + var(--app-safe-right)) calc(1rem + var(--app-safe-bottom)) auto; max-width: calc(100% - 2rem - var(--app-safe-left) - var(--app-safe-right)); padding: .7rem 1rem; z-index: 2; background: var(--surface); border: 1px solid var(--accent); border-radius: 8px; overflow-wrap: anywhere; }
 
 .focus-previous { margin-bottom: .55rem; color: var(--muted); overflow-wrap: anywhere; }

@@ -1,6 +1,6 @@
 .widget-dialog.reminder-overlay[open] {
-  width: min(42rem, calc(100% - 40px));
-  max-height: min(75dvh, 32rem);
+  width: min(42rem, calc(var(--app-safe-width) - 40px));
+  max-height: min(75dvh, 32rem, calc(var(--app-safe-height) - 28px));
   border-color: var(--theme-focus);
 }
 .reminder-overlay::backdrop { background: rgb(0 0 0 / .57); touch-action: none; }
