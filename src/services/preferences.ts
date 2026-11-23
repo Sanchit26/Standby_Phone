@@ -33,10 +33,10 @@ export function normalizePreferences(value: unknown): UserPreferences {
   const enabled = Array.isArray(raw.widgetEnabled)
     ? raw.widgetEnabled.filter((id): id is WidgetId => hasId(widgets, id)) : widgetIds
   const available = new Set(enabled)
-  if (!enabled.some(id => id !== 'media')) available.add('tasks')
+  if (available.size === 0) available.add('tasks')
   const widgetEnabled = widgetOrder.filter(id => available.has(id))
   const widgetDefault = hasId(widgets, raw.widgetDefault) && available.has(raw.widgetDefault)
-    ? raw.widgetDefault : widgetEnabled.find(id => id !== 'media') ?? 'tasks'
+    ? raw.widgetDefault : widgetEnabled[0] ?? 'tasks'
   const device = raw.deviceCalendar as Partial<UserPreferences['deviceCalendar']> | undefined
   const sanctuary = raw.sanctuary as Partial<UserPreferences['sanctuary']> | undefined
   return {

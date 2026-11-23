@@ -6,7 +6,7 @@ import { startSpeech } from '../services/speech'
 import './reminderOverlay.css'
 
 interface Notice { message: string; status: string; closing?: boolean; dismiss: () => void }
-export function ReminderOverlay() {
+export function ReminderOverlay({ covered = false }: { covered?: boolean }) {
   const [notice, setNotice] = useState<Notice>()
   const dialog = useRef<HTMLDialogElement>(null)
   const visible = notice !== undefined
@@ -15,7 +15,7 @@ export function ReminderOverlay() {
     if (!visible || !el) return
     el.showModal()
     return () => el.close()
-  }, [visible])
+  }, [visible, covered])
 
   useEffect(() => startReminderScheduler(async ({ reminder, delivery }, signal) => {
     const message = delivery.message || reminder.title
@@ -56,7 +56,7 @@ export function ReminderOverlay() {
     }
   }), [])
 
-  return visible && <dialog ref={dialog} className="widget-dialog reminder-overlay theme-panel" aria-label="Voice reminder" data-closing={notice.closing}
+  return visible && !covered && <dialog ref={dialog} className="widget-dialog reminder-overlay theme-panel" aria-label="Voice reminder" data-closing={notice.closing}
     data-page-swipe="off" onCancel={event => { event.preventDefault(); notice.dismiss() }}>
     <Ornament />
     <div className="reminder-overlay-body">

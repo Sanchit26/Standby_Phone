@@ -10,6 +10,7 @@ import { db } from '../../storage/database'
 import { saveBackup } from '../../services/backupDownload'
 import { CalendarSettings } from './CalendarSettings'
 import { VoiceReminders } from './VoiceReminders'
+import { PhoneConnection } from './PhoneConnection'
 import './settings.css'
 import './voiceReminders.css'
 
@@ -87,6 +88,7 @@ export function Settings() {
       <Link className="widget-action" to="/?timer=controls" state={{ openedTimer: true }}>Open timer controls</Link>
     </Panel>
     <CalendarSettings />
+    <PhoneConnection />
     <VoiceReminders />
     <Panel title="Sanctuary and Media">
       <p>Manage imports, ordering, the default item and playback in Sanctuary’s library.</p>

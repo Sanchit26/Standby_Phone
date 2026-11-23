@@ -4,6 +4,7 @@ import { ProgressWidget, CalendarWidget, FocusWidget, QuoteWidget } from './Offl
 
 import { SanctuaryWidget } from '../../pages/Sanctuary/Sanctuary'
 import { MediaWidget } from '../../pages/Spotify/Spotify'
+import { NotificationWidget } from '../PhoneAlerts'
 export interface WidgetDefinition {
   name: string
   description: string
@@ -18,7 +19,8 @@ export const widgets = {
   focus: { name: 'Focus', description: 'See the current timer and recorded sessions.', capabilities: [], Component: FocusWidget },
   quote: { name: 'Quote', description: 'Browse a small offline quote collection.', capabilities: [], Component: QuoteWidget },
   sanctuary: { name: 'Sanctuary', description: 'Open your local ambient library.', capabilities: [], Component: SanctuaryWidget },
-  media: { name: 'Media', description: 'Preview the layout for future native playback.', capabilities: ['native'], Component: MediaWidget },
+  media: { name: 'Spotify', description: 'Control the Spotify session on your paired phone.', capabilities: ['native'], Component: MediaWidget },
+  notifications: { name: 'Notifications', description: 'Read recent alerts from your paired phone.', capabilities: ['native'], Component: NotificationWidget },
 } satisfies Record<string, WidgetDefinition>
 
 export type WidgetId = keyof typeof widgets

@@ -22,15 +22,25 @@ public class MainActivity extends BridgeActivity {
         registerPlugin(StandbyBrightnessPlugin.class);
         registerPlugin(StandbyCalendarPlugin.class);
         registerPlugin(StandbyBackupPlugin.class);
+        registerPlugin(PhoneLinkPlugin.class);
         super.onCreate(savedInstanceState);
         configureEdgeToEdge();
+        applyPhoneRole();
         hideSystemBars();
     }
 
     @Override
     public void onStart() {
         super.onStart();
-        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+        if (!PhoneState.get(this).sender()) getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+    }
+
+    void applyPhoneRole() {
+        boolean sender = PhoneState.get(this).sender();
+        setRequestedOrientation(sender ? android.content.pm.ActivityInfo.SCREEN_ORIENTATION_USER :
+            android.content.pm.ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE);
+        if (sender) getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+        else getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
     }
 
     @Override

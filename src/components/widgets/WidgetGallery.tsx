@@ -39,7 +39,7 @@ export function WidgetGallery({ close }: { close: () => void }) {
       {widgetOrder.map((id, index) => {
         const definition = widgets[id]
         const enabled = widgetEnabled.includes(id)
-        const required = enabled && id !== 'media' && widgetEnabled.filter(value => value !== 'media').length === 1
+        const required = enabled && widgetEnabled.length === 1
         return <li key={id}>
           <div className="widget-entry">
             <label><input type="checkbox" checked={enabled} disabled={required} onChange={() => toggle(id)} /> {definition.name}</label>

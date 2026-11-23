@@ -1,0 +1,9 @@
+.phone-settings { display: grid; gap: .7rem; min-width: 0; }
+.phone-settings > label:not(.settings-switch) { display: flex; align-items: center; justify-content: space-between; gap: .8rem; flex-wrap: wrap; }
+.phone-settings input:not([type=checkbox]) { padding: .5rem; max-width: 100%; color: var(--foreground); background: var(--surface); border: 1px solid var(--theme-divider); }
+.phone-settings p { margin: 0; }
+.phone-buttons { display: flex; gap: .55rem; flex-wrap: wrap; }
+.phone-settings .settings-switch { flex-wrap: nowrap; }
+.phone-settings .settings-switch input { flex: none; }
+.phone-settings details small { overflow-wrap: anywhere; }
+.phone-code { user-select: all; overflow-wrap: anywhere; font: 1rem monospace; padding: .7rem; border: 1px solid var(--theme-divider); }

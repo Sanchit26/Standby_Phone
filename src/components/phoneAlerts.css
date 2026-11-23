@@ -1,0 +1,24 @@
+.remote-inbox article, .remote-banner { display:flex; align-items:center; gap:.8rem; }
+.remote-inbox article { padding:.55rem 0; border-bottom:1px solid var(--theme-divider); }
+.remote-inbox article > div, .remote-banner > div { min-width:0; overflow-wrap:anywhere; }
+.remote-inbox p, .remote-banner p { margin:0; }
+.remote-inbox svg, .remote-banner svg { flex:none; }
+.remote-note-symbol svg { width:24px; height:24px; }
+.remote-note-symbol .pixel-bell, [data-theme="dark-fantasy-rpg"] .remote-note-symbol .lucide { display:none; }
+[data-theme="dark-fantasy-rpg"] .remote-note-symbol .pixel-bell { display:block; color:var(--ornament-highlight); }
+.remote-banner { position:fixed; z-index:5; bottom:calc(var(--app-safe-bottom) + 12px); right:calc(var(--app-safe-right) + 16px); max-width:min(28rem,85vw); padding:.65rem 1rem; background:var(--background); color:var(--foreground); border:1px solid var(--theme-divider); border-radius:8px; pointer-events:none; }
+body:has(dialog:modal) .remote-banner { display:none; }
+[data-theme="dark-fantasy-rpg"] .remote-banner { border:2px double var(--ornament-bronze); border-radius:0; background:var(--theme-panel); }
+.remote-call { text-align:center; padding:clamp(12px,4vh,2rem); }
+.remote-call strong { display:block; font-size:clamp(1.6rem,5vw,4rem); overflow-wrap:anywhere; }
+.remote-call svg { width:clamp(42px,12vh,100px); height:auto; color:var(--accent); margin:auto; }
+.remote-call .call-fantasy-icon, [data-theme="dark-fantasy-rpg"] .remote-call .call-minimal-icon { display:none; }
+[data-theme="dark-fantasy-rpg"] .remote-call .call-fantasy-icon { display:block; }
+[data-theme="dark-fantasy-rpg"] .remote-call { color:var(--ornament-parchment); font-family:var(--theme-font-heading); }
+[data-theme="dark-fantasy-rpg"] .remote-call svg { color:var(--ornament-highlight); }
+@media(prefers-reduced-motion:no-preference) { .remote-call svg { animation:call-ring 1.8s ease-in-out infinite; } @keyframes call-ring { 50% { opacity:.7; transform:rotate(-5deg); } } }
+@media(prefers-reduced-motion:no-preference) {
+  dialog:has(.remote-call) { animation:call-appear 140ms ease-out; }
+  dialog:has(.remote-call[data-closing="true"]) { animation:call-appear 140ms ease-in reverse both; }
+  @keyframes call-appear { from { opacity:0; transform:translateY(4px); } to { opacity:1; transform:translateY(0); } }
+}

@@ -12,8 +12,15 @@ import { usePageSwipe } from '../hooks/usePageSwipe'
 
 import { Calendar } from '../pages/Calendar/Calendar'
 import { Spotify } from '../pages/Spotify/Spotify'
-import { ReminderOverlay } from '../components/ReminderOverlay'
+import { ReceiverOverlays } from '../components/PhoneAlerts'
+import { usePhoneMode } from '../services/phoneLink'
+import { SenderSetup } from '../pages/Settings/PhoneConnection'
 export function App() {
+  const mode=usePhoneMode()
+  if(mode==='loading')return null
+  return mode==='sender' ? <SenderSetup/> : <ReceiverDashboard/>
+}
+function ReceiverDashboard() {
   const gesture = usePageSwipe()
   useDeviceCalendarConnection()
   const { notice } = useTimer()
@@ -32,7 +39,7 @@ export function App() {
       <Route path="/settings" element={<Settings />} />
       <Route path="*" element={<p>Page not found.</p>} />
     </Routes></main>
-    <ReminderOverlay />
+    <ReceiverOverlays />
     {notice && new URLSearchParams(search).get('timer') !== 'controls' && <div role="status" className="focus-toast">{notice}</div>}
   </div>
 }
