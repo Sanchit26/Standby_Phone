@@ -15,15 +15,15 @@
 
 ## AMOLED Minimal
 
-![AMOLED Minimal Standby dashboard with a slim digital clock, 18-minute countdown, and November calendar with marked event days.](docs/screenshots/standby-amoled.png)
+![AMOLED Minimal Standby dashboard with the Modern Digital clock face, an 18-minute countdown, and November calendar with marked event days.](docs/screenshots/standby-amoled.png)
 
-True black, a slim clock face, and a month at a glance.
+True black, the Modern Digital clock face, and a month at a glance.
 
 ## Dark Fantasy RPG
 
-![Dark Fantasy RPG Standby dashboard with a large serif clock, compact countdown, and Studio Projects at 50 percent completion.](docs/screenshots/standby-rpg.png)
+![Dark Fantasy RPG Standby dashboard with the Fantasy Pixel clock face, a compact countdown, and Studio Projects at 50 percent completion.](docs/screenshots/standby-rpg.png)
 
-Bronze framing and an active quest list with its own progress bar.
+Bronze framing, the Fantasy Pixel clock face, and an active quest list with its own progress bar.
 
 ## Features
 
