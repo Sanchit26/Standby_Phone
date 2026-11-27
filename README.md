@@ -1,4 +1,4 @@
-<h1 align="center">Standby</h1>
+<h1 align="center">Standby - Personal Productivity Dashboard</h1>
 
 <p align="center"><strong>A second life for your spare Android phone.</strong></p>
 
